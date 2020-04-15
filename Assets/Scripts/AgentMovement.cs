@@ -16,23 +16,32 @@ public class AgentMovement : MonoBehaviour
         Flocking
     }
 
+    private RandomMovement randomMovement;
+    private ObstacleAvoidance obstacleAvoidance;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        
+        randomMovement = new RandomMovement();
+        obstacleAvoidance = new ObstacleAvoidance();
     }
     
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.R))
         {
+            Debug.Log("Random");
             movementAlgorithm = MovementAlgorithm.Random;
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.S))
         {
+            Debug.Log("Steering");
             movementAlgorithm = MovementAlgorithm.Steering;
         }
-        else
+        else if (Input.GetKeyDown(KeyCode.F))
         {
+            Debug.Log("Flocking");
             movementAlgorithm = MovementAlgorithm.Flocking;
         }
         
@@ -43,13 +52,15 @@ public class AgentMovement : MonoBehaviour
             switch (movementAlgorithm)
             {
                 case MovementAlgorithm.Steering:
-                    //destination =
+                    destination = obstacleAvoidance.GetSteering(agent).HasValue ?
+                                  obstacleAvoidance.GetSteering(agent).Value.linear :
+                                  randomMovement.PickRandomDestination(Vector3.zero, movementRange);
                     break;
                 case MovementAlgorithm.Flocking:
                     //destination =
                     break;
                 default:
-                    destination = Helpers.PickRandomDestination(Vector3.zero, movementRange);
+                    destination = randomMovement.PickRandomDestination(Vector3.zero, movementRange);
                     break;
             }
             
