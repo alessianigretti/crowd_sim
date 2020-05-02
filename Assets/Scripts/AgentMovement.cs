@@ -33,16 +33,29 @@ public class AgentMovement : MonoBehaviour
         {
             Debug.Log("Random");
             movementAlgorithm = MovementAlgorithm.Random;
+            agent.enabled = true;
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
             Debug.Log("Steering");
             movementAlgorithm = MovementAlgorithm.Steering;
+            agent.enabled = true;
         }
         else if (Input.GetKeyDown(KeyCode.F))
         {
             Debug.Log("Flocking");
             movementAlgorithm = MovementAlgorithm.Flocking;
+            agent.enabled = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("Stop");
+            agent.enabled = false;
+        }
+
+        if (!agent.enabled)
+        {
+            return;
         }
         
         if (agent.remainingDistance <= agent.stoppingDistance + additionalRemainingDistance)
@@ -64,7 +77,7 @@ public class AgentMovement : MonoBehaviour
                     break;
             }
             
-            agent.SetDestination(destination);
+            agent.velocity = destination;
         }
     }
 }

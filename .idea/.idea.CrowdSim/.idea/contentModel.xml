@@ -9,6 +9,7 @@
         <e p="Scripts" t="Include">
           <e p="AgentMovement.cs" t="Include" />
           <e p="AgentSpawner.cs" t="Include" />
+          <e p="KDTree.cs" t="Include" />
           <e p="MovementAlgorithms" t="Include">
             <e p="ObstacleAvoidance.cs" t="Include" />
             <e p="RandomMovement.cs" t="Include" />
