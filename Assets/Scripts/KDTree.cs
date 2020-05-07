@@ -88,9 +88,12 @@ public class KDTreeBuilder
 
         var sortedPoints = Sort(points, splittingAxis);
 
-        return new KDTree(sortedPoints[n / 2],
-            BuildKDTree(sortedPoints.GetRange(0, (n-1) / 2), depth + 1),
-            BuildKDTree(sortedPoints.GetRange((n-1) / 2 + 1, sortedPoints.Count - 1), depth + 1));
+        var half = (int)Mathf.Floor(n * 0.5f);
+        var midNode = sortedPoints[half];
+        var leftTree = BuildKDTree(GetRangeBetweenIndicesInclusive(sortedPoints, 0, half - 1), depth + 1);
+        var rightTree = BuildKDTree(GetRangeBetweenIndicesInclusive(sortedPoints, half + 1, sortedPoints.Count - 1), depth + 1);
+        
+        return new KDTree(midNode, leftTree, rightTree);
     }
 
     public Point NearestNeighbour(KDTree tree, Point point, int depth = 0)
@@ -170,5 +173,20 @@ public class KDTreeBuilder
         {
             return p2;
         }
+    }
+
+    private List<Point> GetRangeBetweenIndicesInclusive(List<Point> points, int startIndex, int endIndex)
+    {
+        List<Point> pointsRange = new List<Point>();
+        
+        for (int i = 0; i < points.Count; i++)
+        {
+            if (i >= startIndex && i <= endIndex)
+            {
+                pointsRange.Add(points[i]);
+            }
+        }
+
+        return pointsRange;
     }
 }

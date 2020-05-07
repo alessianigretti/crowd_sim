@@ -17,11 +17,9 @@ public class AgentSpawner : MonoBehaviour
     {
         kdTree = new KDTreeBuilder();
         randomMovement = new RandomMovement();
-
-        mainAgent = Instantiate(agentPrefab, randomMovement.PickRandomDestination(Vector3.zero, spawnRange),
-            Quaternion.identity).GetComponent<NavMeshAgent>();
+        mainAgent = GameObject.Find("Agent").GetComponent<NavMeshAgent>();
         
-        for (int i = 0; i < amount - 1; i++)
+        for (int i = 0; i < amount; i++)
         {
             var agent = Instantiate(agentPrefab, randomMovement.PickRandomDestination(Vector3.zero, spawnRange), Quaternion.identity);
             agents.Add(agent.GetComponent<NavMeshAgent>());
@@ -36,6 +34,7 @@ public class AgentSpawner : MonoBehaviour
             var tree = kdTree.BuildKDTree(GetPoints());
             var pointPosition = mainAgent.transform.position;
             var nearestPoint = kdTree.NearestNeighbour(tree, new Point(pointPosition.x, pointPosition.z));
+            Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere), new Vector3(nearestPoint.x, 0, nearestPoint.y), Quaternion.identity);
             Debug.Log("Agent position: x " + pointPosition.x + " y " + pointPosition.z);
             Debug.Log("Nearest neighbour: x " + nearestPoint.x + " y " + nearestPoint.y);
         }
