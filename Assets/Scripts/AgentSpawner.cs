@@ -5,8 +5,10 @@ using UnityEngine.AI;
 public class AgentSpawner : MonoBehaviour
 {
     public GameObject agentPrefab;
+    public GameObject highlightPrefab;
     public int amount = 30;
     public float spawnRange = 30f;
+    public int nNearest = 5;
 
     private NavMeshAgent mainAgent;
     private List<NavMeshAgent> agents = new List<NavMeshAgent>();
@@ -33,10 +35,13 @@ public class AgentSpawner : MonoBehaviour
             Debug.Log("Nearest Neighbour");
             var tree = kdTree.BuildKDTree(GetPoints());
             var pointPosition = mainAgent.transform.position;
-            var nearestPoint = kdTree.NearestNeighbour(tree, new Point(pointPosition.x, pointPosition.z));
-            Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere), new Vector3(nearestPoint.x, 0, nearestPoint.y), Quaternion.identity);
-            Debug.Log("Agent position: x " + pointPosition.x + " y " + pointPosition.z);
-            Debug.Log("Nearest neighbour: x " + nearestPoint.x + " y " + nearestPoint.y);
+            var nearestPoints = kdTree.NearestNeighbours(nNearest, tree, new Point(pointPosition.x, pointPosition.z));
+            foreach (var point in nearestPoints)
+            {
+                Instantiate(highlightPrefab, new Vector3(point.Point.x, 0, point.Point.y), highlightPrefab.transform.rotation);
+                Debug.Log("Agent position: x " + pointPosition.x + " y " + pointPosition.z);
+                Debug.Log("Nearest neighbour: x " + point.Point.x + " y " + point.Point.y);
+            }
         }
     }
 

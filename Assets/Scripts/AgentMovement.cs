@@ -77,7 +77,7 @@ public class AgentMovement : MonoBehaviour
                     break;
             }
             
-            agent.velocity = destination;
+            agent.SetDestination(destination);
         }
     }
 }

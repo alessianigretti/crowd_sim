@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class Point : IComparable<Point>
@@ -69,6 +71,14 @@ public class KDTreeBuilder
 {
     public int k = 6;
     
+    private List<Neighbour> nearestNeighbours = new List<Neighbour>();
+
+    public struct Neighbour
+    {
+        public Point Point;
+        public float Distance;
+    }
+    
     public KDTree BuildKDTree(List<Point> points, int depth = 0)
     {
         var n = points.Count - 1;
@@ -96,44 +106,72 @@ public class KDTreeBuilder
         return new KDTree(midNode, leftTree, rightTree);
     }
 
-    public Point NearestNeighbour(KDTree tree, Point point, int depth = 0)
+    public List<Neighbour> NearestNeighbours(int n, KDTree tree, Point point)
     {
-        if (tree == null)
+        nearestNeighbours.Clear();
+        
+        ComputeAllDistances(tree, point);
+        
+        nearestNeighbours.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+
+        return nearestNeighbours.GetRange(0, n);
+    }
+
+    // private Point NearestNeighbour(KDTree tree, Point point, int depth = 0)
+    // {
+    //     if (tree == null)
+    //     {
+    //         return null;
+    //     }
+    //
+    //     var splittingAxis = depth % k;
+    //     var pointValue = splittingAxis == 0 ? point.x : point.y;
+    //     var rootValue = splittingAxis == 0 ? tree.root.x : tree.root.y;
+    //
+    //     KDTree nextBranch = null;
+    //     KDTree oppositeBranch = null;
+    //
+    //     if (pointValue < rootValue)
+    //     {
+    //         nextBranch = tree.leftTree;
+    //         oppositeBranch = tree.rightTree;
+    //     }
+    //     else
+    //     {
+    //         nextBranch = tree.rightTree;
+    //         oppositeBranch = tree.leftTree;
+    //     }
+    //
+    //     var best = ClosestDistance(point,
+    //                                     NearestNeighbour(nextBranch, point, depth + 1),
+    //                                     tree.root);
+    //
+    //     var distanceFromBest = Vector2.Distance(new Vector2(point.x, point.y), new Vector2(best.x, best.y));
+    //     if (distanceFromBest > Mathf.Abs(pointValue - rootValue))
+    //     {
+    //         best = ClosestDistance(point,
+    //                             NearestNeighbour(oppositeBranch, point, depth + 1),
+    //                             best);
+    //     }
+    //
+    //     return best;
+    // }
+
+    private void ComputeAllDistances(KDTree tree, Point point)
+    {
+        if (tree.leftTree != null)
         {
-            return null;
+            ComputeAllDistances(tree.leftTree, point);
         }
 
-        var splittingAxis = depth % k;
-        var pointValue = splittingAxis == 0 ? point.x : point.y;
-        var rootValue = splittingAxis == 0 ? tree.root.x : tree.root.y;
-
-        KDTree nextBranch = null;
-        KDTree oppositeBranch = null;
-
-        if (pointValue < rootValue)
+        if (tree.rightTree != null)
         {
-            nextBranch = tree.leftTree;
-            oppositeBranch = tree.rightTree;
+            ComputeAllDistances(tree.rightTree, point);
         }
-        else
-        {
-            nextBranch = tree.rightTree;
-            oppositeBranch = tree.leftTree;
-        }
-
-        var best = ClosestDistance(point,
-                                        NearestNeighbour(nextBranch, point, depth + 1),
-                                        tree.root);
-
-        var distanceFromBest = Vector2.Distance(new Vector2(point.x, point.y), new Vector2(best.x, best.y));
-        if (distanceFromBest > Mathf.Abs(pointValue - rootValue))
-        {
-            best = ClosestDistance(point,
-                                NearestNeighbour(oppositeBranch, point, depth + 1),
-                                best);
-        }
-
-        return best;
+        
+        Vector2 rootVec = new Vector2(tree.root.x, tree.root.y);
+        Vector2 pointVec = new Vector2(point.x, point.y);
+        nearestNeighbours.Add(new Neighbour {Point = tree.root, Distance = Vector2.Distance(rootVec, pointVec)});
     }
 
     private List<Point> Sort(List<Point> array, int key)
@@ -150,30 +188,30 @@ public class KDTreeBuilder
         return array;
     }
 
-    private Point ClosestDistance(Point pivot, Point p1, Point p2)
-    {
-        if (p1 == null)
-        {
-            return p2;
-        }
-
-        if (p2 == null)
-        {
-            return p1;
-        }
-
-        var d1 = Vector2.Distance(new Vector2(pivot.x, pivot.y), new Vector2(p1.x, p1.y));
-        var d2 = Vector2.Distance(new Vector2(pivot.x, pivot.y), new Vector2(p2.x, p2.y));
-
-        if (d1 < d2)
-        {
-            return p1;
-        }
-        else
-        {
-            return p2;
-        }
-    }
+    // private Point ClosestDistance(Point pivot, Point p1, Point p2)
+    // {
+    //     if (p1 == null)
+    //     {
+    //         return p2;
+    //     }
+    //
+    //     if (p2 == null)
+    //     {
+    //         return p1;
+    //     }
+    //
+    //     var d1 = Vector2.Distance(new Vector2(pivot.x, pivot.y), new Vector2(p1.x, p1.y));
+    //     var d2 = Vector2.Distance(new Vector2(pivot.x, pivot.y), new Vector2(p2.x, p2.y));
+    //
+    //     if (d1 < d2)
+    //     {
+    //         return p1;
+    //     }
+    //     else
+    //     {
+    //         return p2;
+    //     }
+    // }
 
     private List<Point> GetRangeBetweenIndicesInclusive(List<Point> points, int startIndex, int endIndex)
     {
