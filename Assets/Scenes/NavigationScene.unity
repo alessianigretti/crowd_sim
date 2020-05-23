@@ -418,7 +418,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 6700938444787014294, guid: d7cd25345f2e7894abd21219a24e8f1f,
     type: 3}
-  amount: 500
+  highlightPrefab: {fileID: 303635606325761738, guid: 2f1d992e7cd6dc9478f7d03b207ae6f4,
+    type: 3}
+  amount: 10
   spawnRange: 30
   nNearest: 3
 --- !u!4 &1724421508

@@ -35,12 +35,12 @@ public class AgentMovement : MonoBehaviour
             movementAlgorithm = MovementAlgorithm.Random;
             agent.enabled = true;
         }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            Debug.Log("Steering");
-            movementAlgorithm = MovementAlgorithm.Steering;
-            agent.enabled = true;
-        }
+        // else if (Input.GetKeyDown(KeyCode.S))
+        // {
+        //     Debug.Log("Steering");
+        //     movementAlgorithm = MovementAlgorithm.Steering;
+        //     agent.enabled = true;
+        // }
         else if (Input.GetKeyDown(KeyCode.F))
         {
             Debug.Log("Flocking");

@@ -13,12 +13,14 @@ public class AgentSpawner : MonoBehaviour
     private NavMeshAgent mainAgent;
     private List<NavMeshAgent> agents = new List<NavMeshAgent>();
     private RandomMovement randomMovement;
+    private SteeringBehaviour steeringBehaviour;
     private KDTreeBuilder kdTree;
     
     void Start()
     {
         kdTree = new KDTreeBuilder();
         randomMovement = new RandomMovement();
+        steeringBehaviour = new SteeringBehaviour();
         mainAgent = GameObject.Find("Agent").GetComponent<NavMeshAgent>();
         
         for (int i = 0; i < amount; i++)
@@ -30,19 +32,20 @@ public class AgentSpawner : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.N))
+        var tree = kdTree.BuildKDTree(GetPoints());
+        var pointPosition = mainAgent.transform.position;
+        var nearestNeighbours = kdTree.NearestNeighbours(nNearest, tree, new Point(pointPosition.x, pointPosition.z));
+        List<Vector3> nearestPositions = new List<Vector3>();
+        foreach (var point in nearestNeighbours)
         {
-            Debug.Log("Nearest Neighbour");
-            var tree = kdTree.BuildKDTree(GetPoints());
-            var pointPosition = mainAgent.transform.position;
-            var nearestPoints = kdTree.NearestNeighbours(nNearest, tree, new Point(pointPosition.x, pointPosition.z));
-            foreach (var point in nearestPoints)
+            var position = new Vector3(point.Point.x, 0, point.Point.y);
+            nearestPositions.Add(position);
+            if (Input.GetKeyDown(KeyCode.N))
             {
-                Instantiate(highlightPrefab, new Vector3(point.Point.x, 0, point.Point.y), highlightPrefab.transform.rotation);
-                Debug.Log("Agent position: x " + pointPosition.x + " y " + pointPosition.z);
-                Debug.Log("Nearest neighbour: x " + point.Point.x + " y " + point.Point.y);
+                Instantiate(highlightPrefab, position, highlightPrefab.transform.rotation);
             }
         }
+        steeringBehaviour.ComputeFVOConstraints(pointPosition, nearestPositions, mainAgent.radius);
     }
 
     private List<Point> GetPoints()
