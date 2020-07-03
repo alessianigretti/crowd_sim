@@ -4,7 +4,6 @@
     <list default="true" id="b1a84d45-4fab-433d-8916-10b917406a75" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/KDTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -92,7 +91,7 @@
       <workItem from="1590225467390" duration="5421000" />
       <workItem from="1592312364058" duration="1152000" />
       <workItem from="1593098957151" duration="731000" />
-      <workItem from="1593783199326" duration="4422000" />
+      <workItem from="1593783199326" duration="7373000" />
     </task>
     <servers />
   </component>

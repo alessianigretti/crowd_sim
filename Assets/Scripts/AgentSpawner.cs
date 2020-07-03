@@ -42,7 +42,7 @@ public class AgentSpawner : MonoBehaviour
                 Instantiate(highlightPrefab, position, highlightPrefab.transform.rotation);
             }
         }
-        steeringBehaviour.ComputeFVOConstraints(mainAgent, nearestNeighbours, mainAgent.radius);
+        var constraints = steeringBehaviour.ComputeFVOConstraints(mainAgent, nearestNeighbours);
     }
 
     // private List<Point> GetPoints()
