@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SteeringBehaviour
 {
-    public void ComputeFVOConstraints(Vector3 agentPos, List<Vector3> obstaclesPos, float agentsRadius)
+    private float rayDistance = 10f;
+    public void ComputeFVOConstraints(NavMeshAgent agent, List<KDTreeBuilder.Neighbour> obstaclesPos, float agentsRadius)
     {
+        Debug.DrawRay(agent.transform.position, (agent.transform.forward + agent.transform.right * agentsRadius).normalized * rayDistance, Color.red);
+        Debug.DrawRay(agent.transform.position, (agent.transform.forward - agent.transform.right * agentsRadius).normalized * rayDistance, Color.blue);
+        
         foreach (var obstacle in obstaclesPos)
         {
-            var targetDirRight = obstacle - agentPos + new Vector3(agentsRadius, 0, agentsRadius);
-            Physics.Raycast(agentPos, targetDirRight, out var hit1);
-            Debug.DrawRay(agentPos, targetDirRight * hit1.distance, Color.red);
-            
-            var targetDirLeft = obstacle - agentPos - new Vector3(agentsRadius, 0, agentsRadius);
-            Physics.Raycast(agentPos, targetDirLeft, out var hit2);
-            Debug.DrawRay(agentPos, targetDirLeft * hit1.distance, Color.red);
+            var agentTransform = obstacle.Agent.transform;
+            Debug.DrawRay(agentTransform.position, (agentTransform.forward + agentTransform.right * agentsRadius).normalized * rayDistance, Color.red);
+            Debug.DrawRay(agentTransform.position, (agentTransform.forward - agentTransform.right * agentsRadius).normalized * rayDistance, Color.blue);
         }
     }
 }

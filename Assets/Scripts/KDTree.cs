@@ -1,31 +1,20 @@
 ﻿// Thanks to https://www.youtube.com/watch?v=XqXSGSKc8NU
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class Point : IComparable<Point>
+public class ComparerByX : Comparer<NavMeshAgent>
 {
-    public float x { get; private set; }
-    public float y { get; private set; }
-
-    public Point(float x, float y)
+    public override int Compare(NavMeshAgent first, NavMeshAgent second)
     {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int CompareTo(Point other)
-    {
-        if (x.CompareTo(other.x) != 0)
+        if (first.transform.position.x.CompareTo(second.transform.position.x) != 0)
         {
-            return x.CompareTo(other.x);
+            return first.transform.position.x.CompareTo(second.transform.position.x);
         }
-        else if (y.CompareTo(other.y) != 0)
+        else if (first.transform.position.y.CompareTo(second.transform.position.y) != 0)
         {
-            return y.CompareTo(other.y);
+            return first.transform.position.y.CompareTo(second.transform.position.y);
         }
         else
         {
@@ -34,17 +23,17 @@ public class Point : IComparable<Point>
     }
 }
 
-public class ComparerByY : Comparer<Point>
+public class ComparerByY : Comparer<NavMeshAgent>
 {
-    public override int Compare(Point first, Point second)
+    public override int Compare(NavMeshAgent first, NavMeshAgent second)
     {
-        if (first.y.CompareTo(second.y) != 0)
+        if (first.transform.position.y.CompareTo(second.transform.position.y) != 0)
         {
-            return first.y.CompareTo(second.y);
+            return first.transform.position.y.CompareTo(second.transform.position.y);
         }
-        else if (first.x.CompareTo(second.x) != 0)
+        else if (first.transform.position.x.CompareTo(second.transform.position.x) != 0)
         {
-            return first.x.CompareTo(second.x);
+            return first.transform.position.x.CompareTo(second.transform.position.x);
         }
         else
         {
@@ -55,11 +44,11 @@ public class ComparerByY : Comparer<Point>
 
 public class KDTree
 {
-    public Point root;
+    public NavMeshAgent root;
     public KDTree leftTree;
     public KDTree rightTree;
 
-    public KDTree(Point root, KDTree leftTree, KDTree rightTree)
+    public KDTree(NavMeshAgent root, KDTree leftTree, KDTree rightTree)
     {
         this.root = root;
         this.leftTree = leftTree;
@@ -75,13 +64,13 @@ public class KDTreeBuilder
 
     public struct Neighbour
     {
-        public Point Point;
+        public NavMeshAgent Agent;
         public float Distance;
     }
     
-    public KDTree BuildKDTree(List<Point> points, int depth = 0)
+    public KDTree BuildKDTree(List<NavMeshAgent> agents, int depth = 0)
     {
-        var n = points.Count - 1;
+        var n = agents.Count - 1;
 
         if (n <= 0)
         {
@@ -91,12 +80,12 @@ public class KDTreeBuilder
         if (n == 1)
         {
             // leaf
-            return new KDTree(points[0], null, null);
+            return new KDTree(agents[0], null, null);
         }
 
         var splittingAxis = depth % k;
 
-        var sortedPoints = Sort(points, splittingAxis);
+        var sortedPoints = Sort(agents, splittingAxis);
 
         var half = (int)Mathf.Floor(n * 0.5f);
         var midNode = sortedPoints[half];
@@ -106,11 +95,11 @@ public class KDTreeBuilder
         return new KDTree(midNode, leftTree, rightTree);
     }
 
-    public List<Neighbour> NearestNeighbours(int n, KDTree tree, Point point)
+    public List<Neighbour> NearestNeighbours(int n, KDTree tree, NavMeshAgent agent)
     {
         nearestNeighbours.Clear();
         
-        ComputeAllDistances(tree, point);
+        ComputeAllDistances(tree, agent);
         
         nearestNeighbours.Sort((x, y) => x.Distance.CompareTo(y.Distance));
 
@@ -157,28 +146,28 @@ public class KDTreeBuilder
     //     return best;
     // }
 
-    private void ComputeAllDistances(KDTree tree, Point point)
+    private void ComputeAllDistances(KDTree tree, NavMeshAgent agent)
     {
         if (tree.leftTree != null)
         {
-            ComputeAllDistances(tree.leftTree, point);
+            ComputeAllDistances(tree.leftTree, agent);
         }
 
         if (tree.rightTree != null)
         {
-            ComputeAllDistances(tree.rightTree, point);
+            ComputeAllDistances(tree.rightTree, agent);
         }
         
-        Vector2 rootVec = new Vector2(tree.root.x, tree.root.y);
-        Vector2 pointVec = new Vector2(point.x, point.y);
-        nearestNeighbours.Add(new Neighbour {Point = tree.root, Distance = Vector2.Distance(rootVec, pointVec)});
+        Vector2 rootVec = new Vector2(tree.root.transform.position.x, tree.root.transform.position.y);
+        Vector2 pointVec = new Vector2(agent.transform.position.x, agent.transform.position.y);
+        nearestNeighbours.Add(new Neighbour {Agent = tree.root, Distance = Vector2.Distance(rootVec, pointVec)});
     }
 
-    private List<Point> Sort(List<Point> array, int key)
+    private List<NavMeshAgent> Sort(List<NavMeshAgent> array, int key)
     {
         if (key == 0)
         {
-            array.Sort();
+            array.Sort(new ComparerByX());
         }
         else
         {
@@ -213,15 +202,15 @@ public class KDTreeBuilder
     //     }
     // }
 
-    private List<Point> GetRangeBetweenIndicesInclusive(List<Point> points, int startIndex, int endIndex)
+    private List<NavMeshAgent> GetRangeBetweenIndicesInclusive(List<NavMeshAgent> agents, int startIndex, int endIndex)
     {
-        List<Point> pointsRange = new List<Point>();
+        List<NavMeshAgent> pointsRange = new List<NavMeshAgent>();
         
-        for (int i = 0; i < points.Count; i++)
+        for (int i = 0; i < agents.Count; i++)
         {
             if (i >= startIndex && i <= endIndex)
             {
-                pointsRange.Add(points[i]);
+                pointsRange.Add(agents[i]);
             }
         }
 

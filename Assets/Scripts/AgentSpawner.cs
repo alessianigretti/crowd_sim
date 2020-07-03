@@ -32,32 +32,29 @@ public class AgentSpawner : MonoBehaviour
 
     void Update()
     {
-        var tree = kdTree.BuildKDTree(GetPoints());
-        var pointPosition = mainAgent.transform.position;
-        var nearestNeighbours = kdTree.NearestNeighbours(nNearest, tree, new Point(pointPosition.x, pointPosition.z));
-        List<Vector3> nearestPositions = new List<Vector3>();
+        var tree = kdTree.BuildKDTree(agents);//GetPoints());
+        var nearestNeighbours = kdTree.NearestNeighbours(nNearest, tree, mainAgent);//new Point(mainAgent.transform.position.x, mainAgent.transform.position.z));
         foreach (var point in nearestNeighbours)
         {
-            var position = new Vector3(point.Point.x, 0, point.Point.y);
-            nearestPositions.Add(position);
+            var position = new Vector3(point.Agent.transform.position.x, 0, point.Agent.transform.position.y);
             if (Input.GetKeyDown(KeyCode.N))
             {
                 Instantiate(highlightPrefab, position, highlightPrefab.transform.rotation);
             }
         }
-        steeringBehaviour.ComputeFVOConstraints(pointPosition, nearestPositions, mainAgent.radius);
+        steeringBehaviour.ComputeFVOConstraints(mainAgent, nearestNeighbours, mainAgent.radius);
     }
 
-    private List<Point> GetPoints()
-    {
-        List<Point> points = new List<Point>();
-        
-        foreach (var agent in agents)
-        {
-            var position = agent.transform.position;
-            points.Add(new Point(position.x, position.z));
-        }
-
-        return points;
-    }
+    // private List<Point> GetPoints()
+    // {
+    //     List<Point> points = new List<Point>();
+    //     
+    //     foreach (var agent in agents)
+    //     {
+    //         var position = agent.transform.position;
+    //         points.Add(new Point(position.x, position.z));
+    //     }
+    //
+    //     return points;
+    // }
 }
