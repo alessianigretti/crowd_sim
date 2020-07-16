@@ -420,8 +420,8 @@ MonoBehaviour:
     type: 3}
   highlightPrefab: {fileID: 303635606325761738, guid: 2f1d992e7cd6dc9478f7d03b207ae6f4,
     type: 3}
-  amount: 10
-  spawnRange: 30
+  amount: 1
+  spawnRange: 5
   nNearest: 3
 --- !u!4 &1724421508
 Transform:
