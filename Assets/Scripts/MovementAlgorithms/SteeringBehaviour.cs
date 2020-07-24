@@ -102,10 +102,14 @@ public class SteeringBehaviour : MonoBehaviour
     
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Untagged"))
+        if (other.gameObject.name != "Agent")
         {
             return;
         }
+        // if (other.gameObject.CompareTag("Untagged"))
+        // {
+        //     return;
+        // }
         
         switch (other.gameObject.tag)
         {

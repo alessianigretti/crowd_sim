@@ -7,7 +7,6 @@
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,14 +20,15 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/Seek.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/A278EBD4-4AB0-472B-B8E6-38263E06CD61/78/2159a0f6/Vector3.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4BEC26B5-CBC7-4715-8442-F1499E984732/bd/2524e332/List`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/A278EBD4-4AB0-472B-B8E6-38263E06CD61/cf/0c39e9c9/Transform.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/42FCC02F-EDE7-44D6-A4C9-920C103DDAD8/82/f6a9bc89/Collider2D.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4BEC26B5-CBC7-4715-8442-F1499E984732/bd/2524e332/List`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
@@ -99,6 +99,7 @@
       <workItem from="1593783199326" duration="7973000" />
       <workItem from="1594302664559" duration="5733000" />
       <workItem from="1594886670136" duration="3865000" />
+      <workItem from="1595599094442" duration="3737000" />
     </task>
     <servers />
   </component>
@@ -253,10 +254,10 @@
           <line>33</line>
           <properties documentPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" initialLine="35">
             <startOffsets>
-              <option value="1010" />
+              <option value="1008" />
             </startOffsets>
             <endOffsets>
-              <option value="1086" />
+              <option value="1084" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="14" />

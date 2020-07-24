@@ -31,15 +31,18 @@ public class AgentSpawner : MonoBehaviour
     void Update()
     {
         var tree = kdTree.BuildKDTree(agents);
-        //var nearestNeighbours = kdTree.NearestNeighbours(nNearest, tree, mainAgent);
-        List<KDTreeBuilder.Neighbour> nearestNeighbours = new List<KDTreeBuilder.Neighbour>();
-        foreach (var agent in agents)
-        {
-            nearestNeighbours.Add(new KDTreeBuilder.Neighbour
-            {
-                Agent = agent
-            });
-        }
-        //var constraints = steeringBehaviour.ComputeFVOConstraints(nearestNeighbours);
+        var nearestNeighbours = kdTree.NearestNeighbours(nNearest, tree, mainAgent);
+        var resultingVelocityObstaclePosition = (mainAgent.velocity + nearestNeighbours[0].Agent.velocity) * 0.5f;
+        mainAgent.transform.GetChild(0).transform.localPosition = resultingVelocityObstaclePosition;
+        nearestNeighbours[0].Agent.gameObject.transform.GetChild(0).transform.localPosition = resultingVelocityObstaclePosition;
+
+        //List<KDTreeBuilder.Neighbour> nearestNeighbours = new List<KDTreeBuilder.Neighbour>();
+        // foreach (var agent in agents)
+        // {
+        //     nearestNeighbours.Add(new KDTreeBuilder.Neighbour
+        //     {
+        //         Agent = agent
+        //     });
+        // }
     }
 }
