@@ -422,7 +422,7 @@ MonoBehaviour:
     type: 3}
   amount: 100
   spawnRange: 30
-  nNearest: 3
+  nNearest: 1
 --- !u!4 &1724421508
 Transform:
   m_ObjectHideFlags: 0
