@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Sets random destinations for agents so they keep moving
+/// </summary>
 public class AgentMovement : MonoBehaviour
 {
     public float movementRange = 20f;

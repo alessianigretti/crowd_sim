@@ -1,5 +1,6 @@
 ﻿// Thanks to https://www.youtube.com/watch?v=XqXSGSKc8NU
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,7 +11,7 @@ public static class KDTreeBuilder
     
     public static KDTree BuildKDTree(List<NavMeshAgent> agents, int depth = 0)
     {
-        var n = agents.Count - 1;
+        var n = agents.Count;
 
         if (n <= 0)
         {
@@ -29,20 +30,19 @@ public static class KDTreeBuilder
 
         // Sort agents by distance
         var sortedPoints = Sort(agents, splittingAxis);
-
+        
         // Identify mid index and split tree into left and right
         var half = (int)Mathf.Floor(n * 0.5f);
         var midNode = sortedPoints[half];
-        var leftTree = BuildKDTree(GetRangeBetweenIndicesInclusive(sortedPoints, 0, half - 1), depth + 1);
-        var rightTree = BuildKDTree(GetRangeBetweenIndicesInclusive(sortedPoints, half + 1, sortedPoints.Count - 1), depth + 1);
+        Debug.Log($"depth = {depth} sortedPoints count = {sortedPoints.Count}");
+        var leftTree = BuildKDTree(sortedPoints.GetRange(0, half), depth + 1);
+        var rightTree = BuildKDTree(sortedPoints.GetRange(half, sortedPoints.Count - half), depth + 1);
         
         return new KDTree(midNode, leftTree, rightTree);
-    }
-
-    
+    }        
 
     // private Point NearestNeighbour(KDTree tree, Point point, int depth = 0)
-    // {
+    // {        
     //     if (tree == null)
     //     {
     //         return null;
@@ -80,8 +80,6 @@ public static class KDTreeBuilder
     //
     //     return best;
     // }
-
-    
 
     private static List<NavMeshAgent> Sort(List<NavMeshAgent> agents, int key)
     {
@@ -121,20 +119,4 @@ public static class KDTreeBuilder
     //         return p2;
     //     }
     // }
-
-    static List<NavMeshAgent> pointsRange = new List<NavMeshAgent>();
-    private static List<NavMeshAgent> GetRangeBetweenIndicesInclusive(List<NavMeshAgent> agents, int startIndex, int endIndex)
-    {
-        pointsRange.Clear();
-        
-        for (int i = 0; i < agents.Count; i++)
-        {
-            if (i >= startIndex && i <= endIndex)
-            {
-                pointsRange.Add(agents[i]);
-            }
-        }
-
-        return pointsRange;
-    }
 }
