@@ -34,7 +34,6 @@ public static class KDTreeBuilder
         // Identify mid index and split tree into left and right
         var half = (int)Mathf.Floor(n * 0.5f);
         var midNode = sortedPoints[half];
-        Debug.Log($"depth = {depth} sortedPoints count = {sortedPoints.Count}");
         var leftTree = BuildKDTree(sortedPoints.GetRange(0, half), depth + 1);
         var rightTree = BuildKDTree(sortedPoints.GetRange(half, sortedPoints.Count - half), depth + 1);
         

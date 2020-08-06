@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class SteeringBehaviour : MonoBehaviour
@@ -12,22 +14,15 @@ public class SteeringBehaviour : MonoBehaviour
     
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.name != "Agent")
-        {
-            return;
-        }
-        // if (other.gameObject.CompareTag("Untagged"))
-        // {
-        //     return;
-        // }
-        
         switch (other.gameObject.tag)
         {
             case "Outside":
+                Array.Sort(other.contacts,
+                    (point1, point2) =>
+                        Vector3.Distance(point1.point, navMeshAgent.transform.position).CompareTo(Vector3.Distance(point2.point, navMeshAgent.transform.position)));
                 var closestOutsidePoint = other.contacts[0].point;
-
-                Debug.Log("Assigning new velocity");
-                navMeshAgent.velocity = closestOutsidePoint;
+                
+                //navMeshAgent.velocity = closestOutsidePoint.normalized;
                 
                 break;
             case "Inside":

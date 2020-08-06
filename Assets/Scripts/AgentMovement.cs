@@ -6,7 +6,7 @@ using UnityEngine.AI;
 /// </summary>
 public class AgentMovement : MonoBehaviour
 {
-    public float movementRange = 20f;
+    public bool GoingLeft;
     
     private NavMeshAgent agent;
     private float additionalRemainingDistance = 0.001f;    // avoid characters getting stuck
@@ -25,7 +25,9 @@ public class AgentMovement : MonoBehaviour
         
         if (agent.remainingDistance <= agent.stoppingDistance + additionalRemainingDistance)
         {
-            Vector3 destination = Utils.PickRandomDestination(Vector3.zero, movementRange);
+            //Vector3 destination = Utils.PickRandomPointInCircle(Vector3.zero, movementRange);
+
+            Vector3 destination = GoingLeft ? new Vector3(-40, 0, 0) : new Vector3(40, 0, 0); 
             
             agent.SetDestination(destination);
         }
