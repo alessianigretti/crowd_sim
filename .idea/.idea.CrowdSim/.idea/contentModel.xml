@@ -9,12 +9,16 @@
         <e p="Scripts" t="Include">
           <e p="AgentMovement.cs" t="Include" />
           <e p="AgentSpawner.cs" t="Include" />
-          <e p="KDTree.cs" t="Include" />
-          <e p="MovementAlgorithms" t="Include">
-            <e p="ObstacleAvoidance.cs" t="Include" />
-            <e p="RandomMovement.cs" t="Include" />
-            <e p="Seek.cs" t="Include" />
-            <e p="SteeringBehaviour.cs" t="Include" />
+          <e p="KDTree" t="Include">
+            <e p="ComparerByX.cs" t="Include" />
+            <e p="ComparerByZ.cs" t="Include" />
+            <e p="KDTree.cs" t="Include" />
+            <e p="KDTreeBuilder.cs" t="Include" />
+            <e p="NearestNeighbour.cs" t="Include" />
+          </e>
+          <e p="SteeringBehaviour.cs" t="Include" />
+          <e p="Utilities" t="Include">
+            <e p="Utils.cs" t="Include" />
           </e>
         </e>
       </e>

@@ -2,11 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b1a84d45-4fab-433d-8916-10b917406a75" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByX.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByZ.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTreeBuilder.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTreeBuilder.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities/Utils.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities/Utils.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/KDTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/KDTree.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/Seek.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/Seek.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs.meta" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,19 +38,21 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/Seek.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/A278EBD4-4AB0-472B-B8E6-38263E06CD61/78/2159a0f6/Vector3.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/A278EBD4-4AB0-472B-B8E6-38263E06CD61/cf/0c39e9c9/Transform.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/42FCC02F-EDE7-44D6-A4C9-920C103DDAD8/82/f6a9bc89/Collider2D.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree/KDTreeBuilder.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByZ.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByX.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4BEC26B5-CBC7-4715-8442-F1499E984732/bd/2524e332/List`1.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/11BD515F-D2A0-4526-8509-D23726DE0F46/60/ef4de7e4/List`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/Utils.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -38,14 +61,22 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/MovementHelpers.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Seek.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/CollisionDetector.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/Seek.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTreeOld.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTree.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/SteeringBehaviour.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utils.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/KDTree.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByX.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByZ.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTreeBuilder.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" />
       </list>
     </option>
   </component>
@@ -100,6 +131,7 @@
       <workItem from="1594302664559" duration="5733000" />
       <workItem from="1594886670136" duration="3865000" />
       <workItem from="1595599094442" duration="3737000" />
+      <workItem from="1596696561975" duration="4205000" />
     </task>
     <servers />
   </component>
@@ -211,33 +243,7 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs</url>
-          <line>22</line>
-          <properties documentPath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" initialLine="22">
-            <startOffsets>
-              <option value="579" />
-            </startOffsets>
-            <endOffsets>
-              <option value="614" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs</url>
-          <line>15</line>
-          <properties documentPath="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/ObstacleAvoidance.cs" initialLine="15">
-            <startOffsets>
-              <option value="341" />
-            </startOffsets>
-            <endOffsets>
-              <option value="433" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/KDTree.cs</url>
+          <url>file://$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs</url>
           <line>105</line>
           <properties documentPath="$PROJECT_DIR$/Assets/Scripts/KDTree.cs" initialLine="105">
             <startOffsets>
@@ -251,13 +257,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs</url>
-          <line>33</line>
+          <line>32</line>
           <properties documentPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" initialLine="35">
             <startOffsets>
-              <option value="1008" />
+              <option value="947" />
             </startOffsets>
             <endOffsets>
-              <option value="1084" />
+              <option value="1023" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="14" />

@@ -4,89 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ComparerByX : Comparer<NavMeshAgent>
+public static class KDTreeBuilder
 {
-    public override int Compare(NavMeshAgent first, NavMeshAgent second)
-    {
-        if (first.transform.position.x.CompareTo(second.transform.position.x) != 0)
-        {
-            return first.transform.position.x.CompareTo(second.transform.position.x);
-        }
-        else if (first.transform.position.y.CompareTo(second.transform.position.y) != 0)
-        {
-            return first.transform.position.y.CompareTo(second.transform.position.y);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-}
-
-public class ComparerByY : Comparer<NavMeshAgent>
-{
-    public override int Compare(NavMeshAgent first, NavMeshAgent second)
-    {
-        if (first.transform.position.y.CompareTo(second.transform.position.y) != 0)
-        {
-            return first.transform.position.y.CompareTo(second.transform.position.y);
-        }
-        else if (first.transform.position.x.CompareTo(second.transform.position.x) != 0)
-        {
-            return first.transform.position.x.CompareTo(second.transform.position.x);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-}
-
-public class KDTree
-{
-    public NavMeshAgent root;
-    public KDTree leftTree;
-    public KDTree rightTree;
-
-    public KDTree(NavMeshAgent root, KDTree leftTree, KDTree rightTree)
-    {
-        this.root = root;
-        this.leftTree = leftTree;
-        this.rightTree = rightTree;
-    }
-}
-
-public class KDTreeBuilder
-{
-    public int k = 6;
+    public static int k = 6;
     
-    private List<Neighbour> nearestNeighbours = new List<Neighbour>();
-
-    public struct Neighbour
-    {
-        public NavMeshAgent Agent;
-        public float Distance;
-    }
-    
-    public KDTree BuildKDTree(List<NavMeshAgent> agents, int depth = 0)
+    public static KDTree BuildKDTree(List<NavMeshAgent> agents, int depth = 0)
     {
         var n = agents.Count - 1;
 
         if (n <= 0)
         {
+            // Empty list
             return null;
         }
 
         if (n == 1)
         {
-            // leaf
+            // Leaf node
             return new KDTree(agents[0], null, null);
         }
 
+        // Alternate sorting by X and Z depending on current tree depth
         var splittingAxis = depth % k;
 
+        // Sort agents by distance
         var sortedPoints = Sort(agents, splittingAxis);
 
+        // Identify mid index and split tree into left and right
         var half = (int)Mathf.Floor(n * 0.5f);
         var midNode = sortedPoints[half];
         var leftTree = BuildKDTree(GetRangeBetweenIndicesInclusive(sortedPoints, 0, half - 1), depth + 1);
@@ -95,16 +39,7 @@ public class KDTreeBuilder
         return new KDTree(midNode, leftTree, rightTree);
     }
 
-    public List<Neighbour> NearestNeighbours(int n, KDTree tree, NavMeshAgent agent)
-    {
-        nearestNeighbours.Clear();
-        
-        ComputeAllDistances(tree, agent);
-        
-        nearestNeighbours.Sort((x, y) => x.Distance.CompareTo(y.Distance));
-
-        return nearestNeighbours.GetRange(0, n);
-    }
+    
 
     // private Point NearestNeighbour(KDTree tree, Point point, int depth = 0)
     // {
@@ -146,35 +81,20 @@ public class KDTreeBuilder
     //     return best;
     // }
 
-    private void ComputeAllDistances(KDTree tree, NavMeshAgent agent)
-    {
-        if (tree.leftTree != null)
-        {
-            ComputeAllDistances(tree.leftTree, agent);
-        }
+    
 
-        if (tree.rightTree != null)
-        {
-            ComputeAllDistances(tree.rightTree, agent);
-        }
-        
-        Vector2 rootVec = new Vector2(tree.root.transform.position.x, tree.root.transform.position.y);
-        Vector2 pointVec = new Vector2(agent.transform.position.x, agent.transform.position.y);
-        nearestNeighbours.Add(new Neighbour {Agent = tree.root, Distance = Vector2.Distance(rootVec, pointVec)});
-    }
-
-    private List<NavMeshAgent> Sort(List<NavMeshAgent> array, int key)
+    private static List<NavMeshAgent> Sort(List<NavMeshAgent> agents, int key)
     {
         if (key == 0)
         {
-            array.Sort(new ComparerByX());
+            agents.Sort(new ComparerByX());
         }
         else
         {
-            array.Sort(new ComparerByY());
+            agents.Sort(new ComparerByZ());
         }
 
-        return array;
+        return agents;
     }
 
     // private Point ClosestDistance(Point pivot, Point p1, Point p2)
@@ -202,9 +122,10 @@ public class KDTreeBuilder
     //     }
     // }
 
-    private List<NavMeshAgent> GetRangeBetweenIndicesInclusive(List<NavMeshAgent> agents, int startIndex, int endIndex)
+    static List<NavMeshAgent> pointsRange = new List<NavMeshAgent>();
+    private static List<NavMeshAgent> GetRangeBetweenIndicesInclusive(List<NavMeshAgent> agents, int startIndex, int endIndex)
     {
-        List<NavMeshAgent> pointsRange = new List<NavMeshAgent>();
+        pointsRange.Clear();
         
         for (int i = 0; i < agents.Count; i++)
         {

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class RandomMovement
+public static class Utils
 {
-    public Vector3 PickRandomDestination(Vector3 centralPosition, float range)
+    public static Vector3 PickRandomDestination(Vector3 centralPosition, float range)
     {
         var randomPointInCircle = Random.insideUnitCircle * range;
         return new Vector3(centralPosition.x + randomPointInCircle.x, centralPosition.y,

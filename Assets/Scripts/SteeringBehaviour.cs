@@ -4,6 +4,37 @@ using UnityEngine.AI;
 public class SteeringBehaviour : MonoBehaviour
 {
     private NavMeshAgent navMeshAgent;
+
+    private void Start()
+    {
+        navMeshAgent = GetComponentInParent<NavMeshAgent>();
+    }
+    
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.name != "Agent")
+        {
+            return;
+        }
+        // if (other.gameObject.CompareTag("Untagged"))
+        // {
+        //     return;
+        // }
+        
+        switch (other.gameObject.tag)
+        {
+            case "Outside":
+                var closestOutsidePoint = other.contacts[0].point;
+
+                Debug.Log("Assigning new velocity");
+                navMeshAgent.velocity = closestOutsidePoint;
+                
+                break;
+            case "Inside":
+                break;
+        }
+    }
+    
     //private float rayDistance = 10f;
     //private List<FVOConstraint> constraints = new List<FVOConstraint>();
 
@@ -94,35 +125,4 @@ public class SteeringBehaviour : MonoBehaviour
     //
     //     return constraints;
     // }
-
-    private void Start()
-    {
-        navMeshAgent = GetComponentInParent<NavMeshAgent>();
-    }
-    
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.name != "Agent")
-        {
-            return;
-        }
-        // if (other.gameObject.CompareTag("Untagged"))
-        // {
-        //     return;
-        // }
-        
-        switch (other.gameObject.tag)
-        {
-            case "Outside":
-                // TODO: sort by contact point distance from x0
-                var closestOutsidePoint = other.contacts[0].point;
-
-                Debug.Log("Assigning new velocity");
-                navMeshAgent.velocity = closestOutsidePoint;
-                
-                break;
-            case "Inside":
-                break;
-        }
-    }
 }
