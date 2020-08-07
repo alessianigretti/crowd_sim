@@ -1,34 +1,68 @@
-﻿using System;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class SteeringBehaviour : MonoBehaviour
 {
     private NavMeshAgent navMeshAgent;
+    private float rayDistance = 2f;
 
     private void Start()
     {
         navMeshAgent = GetComponentInParent<NavMeshAgent>();
     }
-    
-    private void OnCollisionEnter(Collision other)
+
+    private void Update()
     {
-        switch (other.gameObject.tag)
+        var agentTransform = navMeshAgent.transform;
+        
+        var rayObstacleRight = new Ray(agentTransform.GetChild(0).position, (agentTransform.forward + agentTransform.right * navMeshAgent.radius).normalized);
+        var rayObstacleLeft = new Ray(agentTransform.GetChild(0).position, (agentTransform.forward - agentTransform.right * navMeshAgent.radius).normalized);
+        
+        Debug.DrawRay(rayObstacleRight.origin, rayObstacleRight.direction * rayDistance, Color.red);
+        Debug.DrawRay(rayObstacleLeft.origin, rayObstacleLeft.direction * rayDistance, Color.blue);
+
+        if (Physics.Raycast(rayObstacleRight, out var hitInfoRight, rayDistance))
         {
-            case "Outside":
-                Array.Sort(other.contacts,
-                    (point1, point2) =>
-                        Vector3.Distance(point1.point, navMeshAgent.transform.position).CompareTo(Vector3.Distance(point2.point, navMeshAgent.transform.position)));
-                var closestOutsidePoint = other.contacts[0].point;
-                
-                //navMeshAgent.velocity = closestOutsidePoint.normalized;
-                
-                break;
-            case "Inside":
-                break;
+            if (hitInfoRight.collider.transform.root != transform)
+            {
+                if (hitInfoRight.collider.CompareTag("Outside"))
+                {
+                    navMeshAgent.velocity = hitInfoRight.point.normalized;
+                }
+            }
+        }
+
+        if (Physics.Raycast(rayObstacleLeft, out var hitInfoLeft, rayDistance))
+        {
+            if (hitInfoLeft.collider.transform.root != transform)
+            {
+                if (hitInfoLeft.collider.CompareTag("Outside"))
+                {
+                    navMeshAgent.velocity = hitInfoLeft.point.normalized;
+                }
+            }
         }
     }
+    
+    // private void OnCollisionEnter(Collision other)
+    // {
+    //     switch (other.gameObject.tag)
+    //     {
+    //         case "Outside":
+    //             contactPoints = new ContactPoint[other.contactCount];
+    //             other.GetContacts(contactPoints);
+    //             Array.Sort(contactPoints,
+    //                 (point1, point2) =>
+    //                     Vector3.Distance(point1.point, navMeshAgent.transform.position).CompareTo(Vector3.Distance(point2.point, navMeshAgent.transform.position)));
+    //             var closestOutsidePoint = contactPoints[0].point;
+    //             
+    //             navMeshAgent.velocity = closestOutsidePoint.normalized;
+    //             
+    //             break;
+    //         case "Inside":
+    //             break;
+    //     }
+    // }
     
     //private float rayDistance = 10f;
     //private List<FVOConstraint> constraints = new List<FVOConstraint>();

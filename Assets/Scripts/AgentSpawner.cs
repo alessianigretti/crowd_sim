@@ -7,6 +7,12 @@ using UnityEngine.AI;
 /// </summary>
 public class AgentSpawner : MonoBehaviour
 {
+    public enum CrowdSimType
+    {
+        RandomCrowd,
+        EmergentLanes
+    }
+    public CrowdSimType crowdSimType;
     public GameObject agentPrefab;
     public GameObject agentGoingLeftPrefab;
     public GameObject agentGoingRightPrefab;
@@ -18,19 +24,27 @@ public class AgentSpawner : MonoBehaviour
     
     void OnEnable()
     {
-        for (int i = 0; i < amount / 2; i++)
+        if (crowdSimType == CrowdSimType.RandomCrowd)
         {
-            // var agent = Instantiate(agentPrefab, Utils.PickRandomPointInCircle(Vector3.zero, spawnRange), Quaternion.identity);
-            // agents.Add(agent.GetComponent<NavMeshAgent>());
-
-            var agent = Instantiate(agentGoingLeftPrefab, Utils.PickRandomPointInCircle(new Vector3(40, 0, 0), spawnRange), Quaternion.identity);
-            agents.Add(agentGoingLeftPrefab.GetComponent<NavMeshAgent>());
+            for (int i = 0; i < amount / 2; i++)
+            {
+                var agent = Instantiate(agentPrefab, Utils.PickRandomPointInCircle(Vector3.zero, spawnRange), Quaternion.identity);
+                agents.Add(agent.GetComponent<NavMeshAgent>());
+            }
         }
-        
-        for (int i = 0; i < amount / 2; i++)
+        else if (crowdSimType == CrowdSimType.EmergentLanes)
         {
-            var agent = Instantiate(agentGoingRightPrefab, Utils.PickRandomPointInCircle(new Vector3(-40, 0, 0), spawnRange), Quaternion.identity);
-            agents.Add(agentGoingRightPrefab.GetComponent<NavMeshAgent>());
+            for (int i = 0; i < amount / 2; i++)
+            {
+                var agent = Instantiate(agentGoingLeftPrefab, Utils.PickRandomPointInCircle(new Vector3(40, 0, 0), spawnRange), Quaternion.identity);
+                agents.Add(agent.GetComponent<NavMeshAgent>());
+            }
+        
+            for (int i = 0; i < amount / 2; i++)
+            {
+                var agent = Instantiate(agentGoingRightPrefab, Utils.PickRandomPointInCircle(new Vector3(-40, 0, 0), spawnRange), Quaternion.identity);
+                agents.Add(agent.GetComponent<NavMeshAgent>());
+            }
         }
     }
 
@@ -52,11 +66,6 @@ public class AgentSpawner : MonoBehaviour
             resultingVelocityObstaclePosition /= nearestNeighbours.Count + 1;
             
             agent.transform.GetChild(0).transform.localPosition = resultingVelocityObstaclePosition;
-            
-            for (int i = 0; i < nearestNeighbours.Count; i++)
-            {
-                nearestNeighbours[i].Agent.gameObject.transform.GetChild(0).transform.localPosition = resultingVelocityObstaclePosition;
-            }
         }
     }
 }
