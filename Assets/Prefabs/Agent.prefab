@@ -461,3 +461,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GoingLeft: 0
+  movementRange: 10

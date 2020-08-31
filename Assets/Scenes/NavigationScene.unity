@@ -416,14 +416,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276fa8347afa04d4aa431ae08e5384f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crowdSimType: 1
   agentPrefab: {fileID: 6700938444787014294, guid: d7cd25345f2e7894abd21219a24e8f1f,
     type: 3}
   agentGoingLeftPrefab: {fileID: 6700938444787014294, guid: c180c9e58d7d4744d8f9de1645ea22be,
     type: 3}
   agentGoingRightPrefab: {fileID: 6700938444787014294, guid: cc88d6693de0da94ab5a969dd96c29fa,
     type: 3}
-  amount: 100
-  spawnRange: 5
+  amount: 50
+  spawnRange: 10
   nNearest: 1
 --- !u!4 &1724421508
 Transform:

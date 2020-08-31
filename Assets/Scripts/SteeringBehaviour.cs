@@ -18,8 +18,8 @@ public class SteeringBehaviour : MonoBehaviour
         var rayObstacleRight = new Ray(agentTransform.GetChild(0).position, (agentTransform.forward + agentTransform.right * navMeshAgent.radius).normalized);
         var rayObstacleLeft = new Ray(agentTransform.GetChild(0).position, (agentTransform.forward - agentTransform.right * navMeshAgent.radius).normalized);
         
-        Debug.DrawRay(rayObstacleRight.origin, rayObstacleRight.direction * rayDistance, Color.red);
-        Debug.DrawRay(rayObstacleLeft.origin, rayObstacleLeft.direction * rayDistance, Color.blue);
+        // Debug.DrawRay(rayObstacleRight.origin, rayObstacleRight.direction * rayDistance, Color.red);
+        // Debug.DrawRay(rayObstacleLeft.origin, rayObstacleLeft.direction * rayDistance, Color.blue);
 
         if (Physics.Raycast(rayObstacleRight, out var hitInfoRight, rayDistance))
         {

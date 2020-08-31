@@ -57,6 +57,17 @@ public class AgentSpawner : MonoBehaviour
         {
             var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
             
+            // Orientate VO towards nearest neighbour
+            var velocityObstacleTransform = agent.transform.GetChild(0);
+            foreach (var nearestNeighbour in nearestNeighbours)
+            {
+                if (nearestNeighbour.Distance > 0)
+                {
+                    velocityObstacleTransform.LookAt(nearestNeighbour.Agent.transform);
+                    break;
+                }
+            }
+
             // Compute VO position depending on average of velocities of colliding agents
             Vector3 resultingVelocityObstaclePosition = agent.velocity;
             for (int i = 0; i < nearestNeighbours.Count; i++)
@@ -65,7 +76,7 @@ public class AgentSpawner : MonoBehaviour
             }
             resultingVelocityObstaclePosition /= nearestNeighbours.Count + 1;
             
-            agent.transform.GetChild(0).transform.localPosition = resultingVelocityObstaclePosition;
+            velocityObstacleTransform.localPosition = resultingVelocityObstaclePosition;
         }
     }
 }
