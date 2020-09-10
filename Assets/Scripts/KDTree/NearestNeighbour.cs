@@ -39,6 +39,12 @@ public static class NearestNeighbour
         // Store distance between root and agent
         Vector2 rootVec = new Vector2(tree.root.transform.position.x, tree.root.transform.position.z);
         Vector2 pointVec = new Vector2(agent.transform.position.x, agent.transform.position.z);
-        nearestNeighbours.Add(new Neighbour {Agent = tree.root, Distance = Vector2.Distance(rootVec, pointVec)});
+        
+        // todo: hacky - this shouldn't be needed and might be covering a bug
+        var distance = Vector2.Distance(rootVec, pointVec);
+        if (distance > 0)
+        {
+            nearestNeighbours.Add(new Neighbour {Agent = tree.root, Distance = Vector2.Distance(rootVec, pointVec)});
+        }
     }
 }

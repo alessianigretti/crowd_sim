@@ -424,8 +424,8 @@ MonoBehaviour:
   agentGoingRightPrefab: {fileID: 6700938444787014294, guid: cc88d6693de0da94ab5a969dd96c29fa,
     type: 3}
   amount: 50
-  spawnRange: 10
-  nNearest: 1
+  spawnRange: 5
+  nNearest: 5
 --- !u!4 &1724421508
 Transform:
   m_ObjectHideFlags: 0

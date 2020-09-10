@@ -1,47 +1,65 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class SteeringBehaviour : MonoBehaviour
+public class SteeringBehaviour
 {
-    private NavMeshAgent navMeshAgent;
     private float rayDistance = 2f;
+    private int obstacleWidthMultiplier = 5;
 
-    private void Start()
-    {
-        navMeshAgent = GetComponentInParent<NavMeshAgent>();
-    }
-
-    private void Update()
+    public void DrawVelocityObstacles(NavMeshAgent navMeshAgent, NavMeshAgent nearestNeighbour)
     {
         var agentTransform = navMeshAgent.transform;
-        
-        var rayObstacleRight = new Ray(agentTransform.GetChild(0).position, (agentTransform.forward + agentTransform.right * navMeshAgent.radius).normalized);
-        var rayObstacleLeft = new Ray(agentTransform.GetChild(0).position, (agentTransform.forward - agentTransform.right * navMeshAgent.radius).normalized);
-        
-        // Debug.DrawRay(rayObstacleRight.origin, rayObstacleRight.direction * rayDistance, Color.red);
-        // Debug.DrawRay(rayObstacleLeft.origin, rayObstacleLeft.direction * rayDistance, Color.blue);
+        var agentVelocityObstacle = navMeshAgent.transform.GetChild(0);
 
-        if (Physics.Raycast(rayObstacleRight, out var hitInfoRight, rayDistance))
-        {
-            if (hitInfoRight.collider.transform.root != transform)
-            {
-                if (hitInfoRight.collider.CompareTag("Outside"))
-                {
-                    navMeshAgent.velocity = hitInfoRight.point.normalized;
-                }
-            }
-        }
+        // Compute VO position depending on average of velocities of colliding agents
+        var avgVelocity = (navMeshAgent.velocity + nearestNeighbour.velocity) * 0.5f;
+        var origin = agentVelocityObstacle.position + avgVelocity;
+        
+        var distance = Vector3.Distance(agentTransform.position, nearestNeighbour.transform.position);
+        var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1/distance).normalized;
+        var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1/distance).normalized;
 
-        if (Physics.Raycast(rayObstacleLeft, out var hitInfoLeft, rayDistance))
-        {
-            if (hitInfoLeft.collider.transform.root != transform)
-            {
-                if (hitInfoLeft.collider.CompareTag("Outside"))
-                {
-                    navMeshAgent.velocity = hitInfoLeft.point.normalized;
-                }
-            }
-        }
+        var rayObstacleRight = new Ray(origin, directionRight);
+        var rayObstacleLeft = new Ray(origin, directionLeft);
+
+        var endRight = rayObstacleRight.GetPoint(rayDistance);
+        var endLeft = rayObstacleLeft.GetPoint(rayDistance);
+
+        agentVelocityObstacle.LookAt(nearestNeighbour.transform);
+
+        Debug.DrawRay(rayObstacleRight.origin, rayObstacleRight.direction * rayDistance, Color.red);
+        Debug.DrawRay(rayObstacleLeft.origin, rayObstacleLeft.direction * rayDistance, Color.blue);
+    }
+
+    public void DoSteering()
+    {
+        // todo: calculate collision points between two lines
+        // todo: choose closest to the desired velocity vector
+        // todo: that point becomes the new velocity
+
+
+        
+        // if (Physics.Raycast(rayObstacleRight, out var hitInfoRight, rayDistance))
+        // {
+        //     if (hitInfoRight.collider.transform.root != navMeshAgent.transform)
+        //     {
+        //         if (hitInfoRight.collider.CompareTag("Outside"))
+        //         {
+        //             navMeshAgent.velocity = hitInfoRight.point.normalized;
+        //         }
+        //     }
+        // }
+        //
+        // if (Physics.Raycast(rayObstacleLeft, out var hitInfoLeft, rayDistance))
+        // {
+        //     if (hitInfoLeft.collider.transform.root != navMeshAgent.transform)
+        //     {
+        //         if (hitInfoLeft.collider.CompareTag("Outside"))
+        //         {
+        //             navMeshAgent.velocity = hitInfoLeft.point.normalized;
+        //         }
+        //     }
+        // }
     }
     
     // private void OnCollisionEnter(Collision other)

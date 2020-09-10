@@ -21,12 +21,13 @@ public class AgentSpawner : MonoBehaviour
     public int nNearest = 5;
 
     private List<NavMeshAgent> agents = new List<NavMeshAgent>();
+    private SteeringBehaviour steeringBehaviour = new SteeringBehaviour();
     
     void OnEnable()
     {
         if (crowdSimType == CrowdSimType.RandomCrowd)
         {
-            for (int i = 0; i < amount / 2; i++)
+            for (int i = 0; i < amount; i++)
             {
                 var agent = Instantiate(agentPrefab, Utils.PickRandomPointInCircle(Vector3.zero, spawnRange), Quaternion.identity);
                 agents.Add(agent.GetComponent<NavMeshAgent>());
@@ -58,25 +59,14 @@ public class AgentSpawner : MonoBehaviour
             var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
             
             // Orientate VO towards nearest neighbour
-            var velocityObstacleTransform = agent.transform.GetChild(0);
-            foreach (var nearestNeighbour in nearestNeighbours)
+            for (int i = 0; i < nearestNeighbours.Count - 1; i++)
             {
-                if (nearestNeighbour.Distance > 0)
-                {
-                    velocityObstacleTransform.LookAt(nearestNeighbour.Agent.transform);
-                    break;
-                }
+                var nearestNeighbour = nearestNeighbours[i];
+                
+                steeringBehaviour.DrawVelocityObstacles(agent, nearestNeighbour.Agent);
             }
 
-            // Compute VO position depending on average of velocities of colliding agents
-            Vector3 resultingVelocityObstaclePosition = agent.velocity;
-            for (int i = 0; i < nearestNeighbours.Count; i++)
-            {
-                resultingVelocityObstaclePosition += nearestNeighbours[i].Agent.velocity;
-            }
-            resultingVelocityObstaclePosition /= nearestNeighbours.Count + 1;
-            
-            velocityObstacleTransform.localPosition = resultingVelocityObstaclePosition;
+            steeringBehaviour.DoSteering();
         }
     }
 }

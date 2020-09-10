@@ -4,8 +4,12 @@
     <list default="true" id="b1a84d45-4fab-433d-8916-10b917406a75" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingLeft.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingLeft.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingRight.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingRight.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,10 +60,10 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/ComparerByZ.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MovementAlgorithms/RandomMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTreeBuilder.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/Utils.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" />
       </list>
@@ -118,7 +122,9 @@
       <workItem from="1595599094442" duration="3737000" />
       <workItem from="1596696561975" duration="18586000" />
       <workItem from="1596791125716" duration="11006000" />
-      <workItem from="1598885474053" duration="2183000" />
+      <workItem from="1598885474053" duration="2873000" />
+      <workItem from="1598889604002" duration="68000" />
+      <workItem from="1599746059972" duration="12346000" />
     </task>
     <servers />
   </component>
