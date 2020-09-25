@@ -3,13 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b1a84d45-4fab-433d-8916-10b917406a75" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Agent.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingLeft.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingLeft.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingRight.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingRight.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -124,7 +119,8 @@
       <workItem from="1596791125716" duration="11006000" />
       <workItem from="1598885474053" duration="2873000" />
       <workItem from="1598889604002" duration="68000" />
-      <workItem from="1599746059972" duration="12346000" />
+      <workItem from="1599746059972" duration="12656000" />
+      <workItem from="1601040232025" duration="6293000" />
     </task>
     <servers />
   </component>

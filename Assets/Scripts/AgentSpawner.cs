@@ -57,16 +57,17 @@ public class AgentSpawner : MonoBehaviour
         foreach (var agent in agents)
         {
             var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
+            var velocityVectors = new List<Ray>();
             
             // Orientate VO towards nearest neighbour
             for (int i = 0; i < nearestNeighbours.Count - 1; i++)
             {
                 var nearestNeighbour = nearestNeighbours[i];
                 
-                steeringBehaviour.DrawVelocityObstacles(agent, nearestNeighbour.Agent);
+                velocityVectors.AddRange(steeringBehaviour.DrawVelocityObstacles(agent, nearestNeighbour.Agent));
             }
 
-            steeringBehaviour.DoSteering();
+            steeringBehaviour.DoSteering(velocityVectors);
         }
     }
 }
