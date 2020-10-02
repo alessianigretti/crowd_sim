@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Vector3 = UnityEngine.Vector3;
@@ -50,7 +51,7 @@ public class SteeringBehaviour
         // {
         //     foreach (var v in velocityVectors)
         //     {
-                var u = new Ray(new Vector3(-0.5f, -0.5f, 0), Vector3.up);
+                var u = new Ray(new Vector3(-1, -1, 0), Vector3.up);
                 var v = new Ray(new Vector3(0, 0, 0), Vector3.left);
         
                 // 1. Find perpendicular vector to U by doing cross product between its direction and the direction of the other vector V
@@ -59,9 +60,10 @@ public class SteeringBehaviour
                 
                 // 2. Find D from the equation of the plane Ax + By + Cz + D = 0
                 // (A,B,C) are replaced by the normal of the plane, and (x,y,z) with the origin of U
-                var planeNormal = sharedPlane.normalized;
+                var planeNormal = new Vector3(-sharedPlane.z, sharedPlane.y, sharedPlane.x);
+                //var planeNormal = Vector3.Cross(sharedPlane, u.direction);
                 var uOrigin = u.origin;
-                var d = -(planeNormal.x * uOrigin.x + planeNormal.y * uOrigin.y + planeNormal.z * uOrigin.z);
+                var d = -1 * (planeNormal.x * uOrigin.x + planeNormal.y * uOrigin.y + planeNormal.z * uOrigin.z);
 
                 // 3. Replace the ray parametric values for V in the plane equation to find t
                 // This means calculating A*(ox + dx*t) + B*(oy + dy*t) + C*(oz + dz*t) + D = 0
@@ -73,12 +75,14 @@ public class SteeringBehaviour
 
                 // 4. Use the parametric ray equation with t to get the intersection point
                 // This means solving A*(ox + dx*t) + B*(oy + dy*t) + C*(oz + dz*t) + D = 0 for vector V replacing t with the newly obtained parameter t.
+                if (float.IsNaN(t)) { t = 0; }
                 var intersectionPoint = new Vector3(vOrigin.x + vDirection.x * t, vOrigin.y + vDirection.y * t, vOrigin.z + vDirection.z * t);
                 Debug.Log(intersectionPoint);
 
                 // 5. Validate intersection point
                 // Check that it is inside the line range and it satisfies the plane equation
                 var isValid = Mathf.Approximately(planeNormal.x * intersectionPoint.x + planeNormal.y * intersectionPoint.y + planeNormal.z * intersectionPoint.z + d, 0f);
+                Debug.Log(isValid);
 
                 return isValid ? intersectionPoint : new Vector3(999, 999, 999);
         //     }
