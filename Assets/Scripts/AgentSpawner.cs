@@ -58,10 +58,10 @@ public class AgentSpawner : MonoBehaviour
         // Build KD-Tree and use it to identify N nearest neighbours (wip)
         var tree = KDTreeBuilder.BuildKDTree(agents);
 
-        var reusedVelocityVectors = new Dictionary<string, List<SteeringBehaviour.VelocityObstacleData>>();
+        var reusedAgentToVelocityVectors = new Dictionary<string, List<SteeringBehaviour.VelocityObstacleData>>();
         foreach (var agent in agents)
         {
-            reusedVelocityVectors[agent.name] = new List<SteeringBehaviour.VelocityObstacleData>();
+            reusedAgentToVelocityVectors[agent.name] = new List<SteeringBehaviour.VelocityObstacleData>();
             // Identify nNearest neighbours
             var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
             
@@ -69,14 +69,11 @@ public class AgentSpawner : MonoBehaviour
             for (int i = 1; i <= nearestNeighbours.Count - 1; i++)
             {
                 var nearestNeighbour = nearestNeighbours[i];
-                steeringBehaviour.DrawVelocityObstacles(reusedVelocityVectors[agent.name], agent, nearestNeighbour.Agent);
+                steeringBehaviour.DrawVelocityObstacles(reusedAgentToVelocityVectors[agent.name], agent, nearestNeighbour.Agent);
             }
         }
 
-        foreach (var velocityVector in reusedVelocityVectors)
-        {
-            // After having computed all velocity vectors, find all intersections and what agents they belong to, and adjust their velocities
-            steeringBehaviour.DoSteering(velocityVector.Key, velocityVector.Value);
-        }
+        // After having computed all velocity vectors, find all intersections and what agents they belong to, and adjust their velocities
+        steeringBehaviour.DoSteering(reusedAgentToVelocityVectors);
     }
 }

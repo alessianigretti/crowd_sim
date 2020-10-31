@@ -12,16 +12,17 @@ public class SteeringBehaviour
     {
         // hacky, used to associate a ray with an agent and know what agent's velocity to adjust upon collision
         public NavMeshAgent agent;
-        
+
         public Ray ray;
     }
-    
+
     private const float MAX_ACCELERATION = 0.5f;
-    
+
     private float rayDistance = 1f;
     private int obstacleWidthMultiplier = 5;
 
-    public void DrawVelocityObstacles(List<VelocityObstacleData> reusedVelocityVectors, NavMeshAgent navMeshAgent, NavMeshAgent nearestNeighbour)
+    public void DrawVelocityObstacles(List<VelocityObstacleData> reusedVelocityVectors, NavMeshAgent navMeshAgent,
+        NavMeshAgent nearestNeighbour)
     {
         var agentVelocityObstacle = navMeshAgent.transform.GetChild(0);
         // Orientate VO towards neighbour
@@ -33,8 +34,8 @@ public class SteeringBehaviour
 
         // Compute direction of each velocity obstacle depending on distance from nearest neighbour
         var distance = Vector3.Distance(navMeshAgent.transform.position, nearestNeighbour.transform.position);
-        var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1/distance).normalized;
-        var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1/distance).normalized;
+        var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
+        var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
 
         var rayObstacleRight = new Ray(origin, directionRight);
         var rayObstacleLeft = new Ray(origin, directionLeft);
@@ -47,16 +48,29 @@ public class SteeringBehaviour
         reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleRight});
     }
 
-    public void DoSteering(string agentName, List<VelocityObstacleData> velocityVectors)
+    public void DoSteering(Dictionary<string, List<VelocityObstacleData>> agentToVelocityVectors)
     {
-        var (intersectionFound, intersectionPoints, agent1, agent2) = ComputeIntersectionPoint(agentName, velocityVectors);
-        if (intersectionFound)
+        // Group all VOs together for each agent to check for intersections against
+        var othersVelocityObstacles = new List<VelocityObstacleData>();
+        foreach (var v in agentToVelocityVectors)
         {
-            agent1.velocity = CalculateClosestIntersectionPoint(intersectionPoints, agent1);
-            agent2.velocity = CalculateClosestIntersectionPoint(intersectionPoints, agent2);
-            agent1.acceleration = Mathf.Min(agent1.acceleration, MAX_ACCELERATION);
-            agent2.acceleration = Mathf.Min(agent2.acceleration, MAX_ACCELERATION);
-            Debug.Log("updating velocity to " + agent1.velocity);
+            othersVelocityObstacles.AddRange(v.Value);
+        }
+
+        // For each agent to velocity vector
+        foreach (var agentToVelocityVector in agentToVelocityVectors)
+        {
+            // Compute intersection point between agent's velocity vectors and the rest
+            var (intersectionFound, intersectionPoints) =
+                ComputeIntersectionPoint(agentToVelocityVector.Value, othersVelocityObstacles);
+            if (intersectionFound)
+            {
+                // If intersection is found, adjust velocity (within certain acceleration)
+                var agent = agentToVelocityVector.Value[0].agent;
+                agent.velocity = CalculateClosestIntersectionPoint(intersectionPoints, agent);
+                agent.acceleration = Mathf.Min(agent.acceleration, MAX_ACCELERATION);
+                Debug.Log("updating velocity to " + agent.velocity);
+            }
         }
     }
 
@@ -65,27 +79,24 @@ public class SteeringBehaviour
         SortedDictionary<float, Vector3> pointToDistance = new SortedDictionary<float, Vector3>();
         foreach (var point in intersectionPoints)
         {
+            // Sort by closest velocity to desired velocity
             pointToDistance[Vector3.Distance(point, agent.desiredVelocity)] = point;
         }
 
         return pointToDistance.Values.First();
     }
 
-    private (bool, List<Vector3>, NavMeshAgent, NavMeshAgent) ComputeIntersectionPoint(string agentName, List<VelocityObstacleData> velocityVectors)
+    private (bool, List<Vector3>) ComputeIntersectionPoint(List<VelocityObstacleData> agentsVelocityObstacles, List<VelocityObstacleData> othersVelocityObstacles)
     {
         var intersectionPoints = new List<Vector3>();
-        NavMeshAgent agent1 = null;
-        NavMeshAgent agent2 = null;
-        foreach (var uData in velocityVectors)
+        foreach (var uData in agentsVelocityObstacles)
         {
             var u = uData.ray;
-            agent1 = uData.agent;
-            
-            foreach (var vData in velocityVectors)
+
+            foreach (var vData in othersVelocityObstacles)
             {
                 var v = vData.ray;
-                agent2 = vData.agent;
-                
+
                 // Ensure we don't find intersection with own rays
                 if (uData.agent.name == vData.agent.name)
                 {
@@ -128,7 +139,8 @@ public class SteeringBehaviour
 
                 // 5. Validate intersection point
                 // Check that it is inside the line range and it satisfies the plane equation
-                double truncatedCalc = Math.Truncate(planeNormal.x * intersectionPoint.x + planeNormal.y * intersectionPoint.y +
+                double truncatedCalc = Math.Truncate(planeNormal.x * intersectionPoint.x +
+                                                     planeNormal.y * intersectionPoint.y +
                                                      planeNormal.z * intersectionPoint.z * 100) / 100;
                 double truncatedD = Math.Truncate(d * 100) / 100;
                 var isValid = Mathf.Approximately((float) (truncatedCalc + truncatedD), 0f);
@@ -139,117 +151,6 @@ public class SteeringBehaviour
             }
         }
 
-        return (intersectionPoints.Count > 0, intersectionPoints, agent1, agent2);
+        return (intersectionPoints.Count > 0, intersectionPoints);
     }
-    
-    // private void OnCollisionEnter(Collision other)
-    // {
-    //     switch (other.gameObject.tag)
-    //     {
-    //         case "Outside":
-    //             contactPoints = new ContactPoint[other.contactCount];
-    //             other.GetContacts(contactPoints);
-    //             Array.Sort(contactPoints,
-    //                 (point1, point2) =>
-    //                     Vector3.Distance(point1.point, navMeshAgent.transform.position).CompareTo(Vector3.Distance(point2.point, navMeshAgent.transform.position)));
-    //             var closestOutsidePoint = contactPoints[0].point;
-    //             
-    //             navMeshAgent.velocity = closestOutsidePoint.normalized;
-    //             
-    //             break;
-    //         case "Inside":
-    //             break;
-    //     }
-    // }
-    
-    //private float rayDistance = 10f;
-    //private List<FVOConstraint> constraints = new List<FVOConstraint>();
-
-    //private GameObject colliderRightIn, colliderRightOut, colliderLeftIn, colliderLeftOut;
-
-    // public SteeringBehaviour()
-    // {
-    //     colliderRightIn = new GameObject("RightIn");
-    //     colliderRightIn.AddComponent<EdgeCollider2D>();
-    //     colliderRightOut = new GameObject("RightOut");
-    //     colliderRightOut.AddComponent<EdgeCollider2D>();
-    //     colliderLeftIn = new GameObject("LeftIn");
-    //     colliderLeftIn.AddComponent<EdgeCollider2D>();
-    //     colliderLeftOut = new GameObject("LeftOut");
-    //     colliderLeftOut.AddComponent<EdgeCollider2D>();
-    // }
-    //
-    // public List<FVOConstraint> ComputeFVOConstraints(List<KDTreeBuilder.Neighbour> obstaclesPos)
-    // {
-    //     constraints.Clear();
-    //     
-    //     foreach (var obstacle in obstaclesPos)
-    //     {
-    //         var agentTransform = obstacle.Agent.transform;
-    //
-    //         colliderRightIn.transform.position = agentTransform.position + agentTransform.forward * 0.25f;
-    //         RaycastHit2D[] resultsRightIn = new RaycastHit2D[2];
-    //         colliderRightIn.GetComponent<EdgeCollider2D>().Raycast((agentTransform.forward + agentTransform.right * obstacle.Agent.radius).normalized, resultsRightIn, rayDistance - 0.25f);
-    //         foreach (var result in resultsRightIn)
-    //         {
-    //             if (result.transform != null && result.transform.gameObject.name != "RightIn")
-    //             {
-    //                 Debug.Log(result.transform.gameObject.name);
-    //             }
-    //         }
-    //         
-    //         colliderRightOut.transform.position = agentTransform.position;
-    //         RaycastHit2D[] resultsRightOut = new RaycastHit2D[2];
-    //         colliderRightOut.GetComponent<EdgeCollider2D>().Raycast((agentTransform.forward + agentTransform.right * obstacle.Agent.radius).normalized, resultsRightOut, rayDistance);
-    //         foreach (var result in resultsRightOut)
-    //         {
-    //             if (result.transform != null && result.transform.gameObject.name != "RightOut")
-    //             {
-    //                 Debug.Log(result.transform.gameObject.name);
-    //             }
-    //         }
-    //         
-    //         colliderLeftIn.transform.position = agentTransform.position + agentTransform.forward * 0.25f;
-    //         RaycastHit2D[] resultsLeftIn = new RaycastHit2D[2];
-    //         colliderLeftIn.GetComponent<EdgeCollider2D>().Raycast((agentTransform.forward - agentTransform.right * obstacle.Agent.radius).normalized, resultsLeftIn, rayDistance - 0.25f);
-    //         foreach (var result in resultsLeftIn)
-    //         {
-    //             if (result.transform != null && result.transform.gameObject.name != "LeftIn")
-    //             {
-    //                 Debug.Log(result.transform.gameObject.name);
-    //             }
-    //         }
-    //         
-    //         colliderLeftOut.transform.position = agentTransform.position;
-    //         RaycastHit2D[] resultsLeftOut = new RaycastHit2D[2];
-    //         colliderLeftOut.GetComponent<EdgeCollider2D>().Raycast((agentTransform.forward - agentTransform.right * obstacle.Agent.radius).normalized, resultsLeftOut, rayDistance);
-    //         foreach (var result in resultsLeftOut)
-    //         {
-    //             if (result.transform != null && result.transform.gameObject.name != "LeftOut")
-    //             {
-    //                 Debug.Log(result.transform.gameObject.name);
-    //             }
-    //         }
-    //         
-    //         var rayObstacleRightInside = new Ray(agentTransform.position + agentTransform.forward * 0.25f, (agentTransform.forward + agentTransform.right * obstacle.Agent.radius).normalized);
-    //         var rayObstacleRightOutside = new Ray(agentTransform.position, (agentTransform.forward + agentTransform.right * obstacle.Agent.radius).normalized);
-    //         var rayObstacleLeftInside = new Ray(agentTransform.position + agentTransform.forward * 0.25f, (agentTransform.forward - agentTransform.right * obstacle.Agent.radius).normalized);
-    //         var rayObstacleLeftOutside = new Ray(agentTransform.position, (agentTransform.forward - agentTransform.right * obstacle.Agent.radius).normalized);
-    //         
-    //         Debug.DrawRay(rayObstacleRightInside.origin, rayObstacleRightInside.direction * (rayDistance - 0.25f), Color.red);
-    //         Debug.DrawRay(rayObstacleLeftInside.origin, rayObstacleLeftInside.direction * (rayDistance - 0.25f), Color.red);
-    //         Debug.DrawRay(rayObstacleRightOutside.origin, rayObstacleRightOutside.direction * rayDistance, Color.blue);
-    //         Debug.DrawRay(rayObstacleLeftOutside.origin, rayObstacleLeftOutside.direction * rayDistance, Color.blue);
-    //         
-    //         constraints.Add(new FVOConstraint
-    //         {
-    //             RightRayInside = rayObstacleRightInside,
-    //             RightRayOutside = rayObstacleRightOutside,
-    //             LeftRayInside = rayObstacleLeftInside,
-    //             LeftRayOutside = rayObstacleLeftOutside
-    //         });
-    //     }
-    //
-    //     return constraints;
-    // }
 }
