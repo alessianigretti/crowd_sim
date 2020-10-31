@@ -1,92 +1,145 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Debug = UnityEngine.Debug;
 using Vector3 = UnityEngine.Vector3;
 
 public class SteeringBehaviour
 {
-    private float rayDistance = 2f;
+    public class VelocityObstacleData
+    {
+        // hacky, used to associate a ray with an agent and know what agent's velocity to adjust upon collision
+        public NavMeshAgent agent;
+        
+        public Ray ray;
+    }
+    
+    private const float MAX_ACCELERATION = 0.5f;
+    
+    private float rayDistance = 1f;
     private int obstacleWidthMultiplier = 5;
 
-    public List<Ray> DrawVelocityObstacles(NavMeshAgent navMeshAgent, NavMeshAgent nearestNeighbour)
+    public void DrawVelocityObstacles(List<VelocityObstacleData> reusedVelocityVectors, NavMeshAgent navMeshAgent, NavMeshAgent nearestNeighbour)
     {
-        var agentTransform = navMeshAgent.transform;
         var agentVelocityObstacle = navMeshAgent.transform.GetChild(0);
+        // Orientate VO towards neighbour
+        agentVelocityObstacle.LookAt(nearestNeighbour.transform);
 
-        // Compute VO position depending on average of velocities of colliding agents
+        // Compute RVO position depending on average of velocities of colliding agents
         var avgVelocity = (navMeshAgent.velocity + nearestNeighbour.velocity) * 0.5f;
         var origin = agentVelocityObstacle.position + avgVelocity;
-        
-        var distance = Vector3.Distance(agentTransform.position, nearestNeighbour.transform.position);
+
+        // Compute direction of each velocity obstacle depending on distance from nearest neighbour
+        var distance = Vector3.Distance(navMeshAgent.transform.position, nearestNeighbour.transform.position);
         var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1/distance).normalized;
         var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1/distance).normalized;
 
         var rayObstacleRight = new Ray(origin, directionRight);
         var rayObstacleLeft = new Ray(origin, directionLeft);
 
-        var endRight = rayObstacleRight.GetPoint(rayDistance);
-        var endLeft = rayObstacleLeft.GetPoint(rayDistance);
+        // Draw ray visualisation
+        Debug.DrawLine(rayObstacleRight.origin, rayDistance * (rayObstacleRight.origin + rayObstacleRight.direction), Color.red);
+        Debug.DrawLine(rayObstacleLeft.origin, rayDistance * (rayObstacleLeft.origin + rayObstacleLeft.direction), Color.blue);
 
-        agentVelocityObstacle.LookAt(nearestNeighbour.transform);
-
-        Debug.DrawRay(rayObstacleRight.origin, rayObstacleRight.direction * rayDistance, Color.red);
-        Debug.DrawRay(rayObstacleLeft.origin, rayObstacleLeft.direction * rayDistance, Color.blue);
-        
-        return new List<Ray> {rayObstacleLeft, rayObstacleRight};
+        reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleLeft});
+        reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleRight});
     }
 
-    public void DoSteering(List<Ray> velocityVectors)
+    public void DoSteering(string agentName, List<VelocityObstacleData> velocityVectors)
     {
-        // todo: calculate collision points between two lines
-        // todo: choose closest to the desired velocity vector
-        // todo: that point becomes the new velocity
-
-        var intersectionPoint = ComputeIntersectionPoint(velocityVectors);
+        var (intersectionFound, intersectionPoints, agent1, agent2) = ComputeIntersectionPoint(agentName, velocityVectors);
+        if (intersectionFound)
+        {
+            agent1.velocity = CalculateClosestIntersectionPoint(intersectionPoints, agent1);
+            agent2.velocity = CalculateClosestIntersectionPoint(intersectionPoints, agent2);
+            agent1.acceleration = Mathf.Min(agent1.acceleration, MAX_ACCELERATION);
+            agent2.acceleration = Mathf.Min(agent2.acceleration, MAX_ACCELERATION);
+            Debug.Log("updating velocity to " + agent1.velocity);
+        }
     }
 
-    private Vector3 ComputeIntersectionPoint(List<Ray> velocityVectors)
+    private Vector3 CalculateClosestIntersectionPoint(List<Vector3> intersectionPoints, NavMeshAgent agent)
     {
-        // foreach (var u in velocityVectors)
-        // {
-        //     foreach (var v in velocityVectors)
-        //     {
-                var u = new Ray(new Vector3(-1, -1, 0), Vector3.up);
-                var v = new Ray(new Vector3(0, 0, 0), Vector3.left);
-        
-                // 1. Find perpendicular vector to U by doing cross product between its direction and the direction of the other vector V
-                // This describes a shared plane between the two vectors
-                var sharedPlane = Vector3.Cross(u.direction, v.direction);
+        SortedDictionary<float, Vector3> pointToDistance = new SortedDictionary<float, Vector3>();
+        foreach (var point in intersectionPoints)
+        {
+            pointToDistance[Vector3.Distance(point, agent.desiredVelocity)] = point;
+        }
+
+        return pointToDistance.Values.First();
+    }
+
+    private (bool, List<Vector3>, NavMeshAgent, NavMeshAgent) ComputeIntersectionPoint(string agentName, List<VelocityObstacleData> velocityVectors)
+    {
+        var intersectionPoints = new List<Vector3>();
+        NavMeshAgent agent1 = null;
+        NavMeshAgent agent2 = null;
+        foreach (var uData in velocityVectors)
+        {
+            var u = uData.ray;
+            agent1 = uData.agent;
+            
+            foreach (var vData in velocityVectors)
+            {
+                var v = vData.ray;
+                agent2 = vData.agent;
                 
+                // Ensure we don't find intersection with own rays
+                if (uData.agent.name == vData.agent.name)
+                {
+                    continue;
+                }
+
+                if (v.origin == u.origin)
+                {
+                    continue;
+                }
+
+                var up1 = u.origin;
+                var up2 = rayDistance * (u.origin + u.direction);
+
+                var vp1 = v.origin;
+                var vp2 = rayDistance * (v.origin + v.direction);
+
+                // 1. Find a perpendicular vector to U's direction (normal of the plane containing U).
+                // This can be computed using the cross product or simply by swapping two components (X and Y) and negating one of them.
+                var tan = Vector3.Cross(up2, vp2);
+                var planeNormal = Vector3.Cross(up2, tan);
+
                 // 2. Find D from the equation of the plane Ax + By + Cz + D = 0
                 // (A,B,C) are replaced by the normal of the plane, and (x,y,z) with the origin of U
-                var planeNormal = new Vector3(-sharedPlane.z, sharedPlane.y, sharedPlane.x);
-                //var planeNormal = Vector3.Cross(sharedPlane, u.direction);
-                var uOrigin = u.origin;
+                var uOrigin = up1;
                 var d = -1 * (planeNormal.x * uOrigin.x + planeNormal.y * uOrigin.y + planeNormal.z * uOrigin.z);
 
                 // 3. Replace the ray parametric values for V in the plane equation to find t
                 // This means calculating A*(ox + dx*t) + B*(oy + dy*t) + C*(oz + dz*t) + D = 0
                 // Replacing A, B, C, D with normal and the calculated D, and replacing OX, OY, OZ with the origin vector of V, and DX, DY, DZ with the direction vector of V.
-                var vOrigin = v.origin;
-                var vDirection = v.direction;
-                var t = -(planeNormal.x * vOrigin.x + planeNormal.y * vOrigin.y + planeNormal.z * vOrigin.z + d) / 
-                        (planeNormal.x * vDirection.x + planeNormal.y * vDirection.y + planeNormal.z * vDirection.z);
+                var vOrigin = vp1;
+                var vDirection = vp2;
+                var t = -(planeNormal.x * vOrigin.x + planeNormal.y * vOrigin.y + planeNormal.z * vOrigin.z + d) /
+                        (planeNormal.x * vDirection.x + planeNormal.y * vDirection.y +
+                         planeNormal.z * vDirection.z);
 
                 // 4. Use the parametric ray equation with t to get the intersection point
                 // This means solving A*(ox + dx*t) + B*(oy + dy*t) + C*(oz + dz*t) + D = 0 for vector V replacing t with the newly obtained parameter t.
-                if (float.IsNaN(t)) { t = 0; }
-                var intersectionPoint = new Vector3(vOrigin.x + vDirection.x * t, vOrigin.y + vDirection.y * t, vOrigin.z + vDirection.z * t);
-                Debug.Log(intersectionPoint);
+                var intersectionPoint = vOrigin + vDirection * t;
 
                 // 5. Validate intersection point
                 // Check that it is inside the line range and it satisfies the plane equation
-                var isValid = Mathf.Approximately(planeNormal.x * intersectionPoint.x + planeNormal.y * intersectionPoint.y + planeNormal.z * intersectionPoint.z + d, 0f);
-                Debug.Log(isValid);
+                double truncatedCalc = Math.Truncate(planeNormal.x * intersectionPoint.x + planeNormal.y * intersectionPoint.y +
+                                                     planeNormal.z * intersectionPoint.z * 100) / 100;
+                double truncatedD = Math.Truncate(d * 100) / 100;
+                var isValid = Mathf.Approximately((float) (truncatedCalc + truncatedD), 0f);
+                if (isValid)
+                {
+                    intersectionPoints.Add(intersectionPoint);
+                }
+            }
+        }
 
-                return isValid ? intersectionPoint : new Vector3(999, 999, 999);
-        //     }
-        // }
+        return (intersectionPoints.Count > 0, intersectionPoints, agent1, agent2);
     }
     
     // private void OnCollisionEnter(Collision other)
