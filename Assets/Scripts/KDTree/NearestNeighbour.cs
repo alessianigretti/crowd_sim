@@ -11,6 +11,30 @@ public static class NearestNeighbour
     }
     
     private static List<Neighbour> nearestNeighbours = new List<Neighbour>();
+
+    public static Neighbour ComputeSimple(NavMeshAgent agent)
+    {
+        var allAgents = GameObject.FindGameObjectsWithTag("Agent");
+        var closestAgent = new Neighbour {Distance = Mathf.Infinity};
+        foreach (var otherAgent in allAgents)
+        {
+            var otherAgentComponent = otherAgent.GetComponent<NavMeshAgent>();
+            if (otherAgentComponent == agent)
+            {
+                continue;
+            }
+            
+            var distance = Vector3.Distance(agent.transform.position, otherAgent.transform.position);
+            if (distance < closestAgent.Distance)
+            {
+                closestAgent.Agent = otherAgentComponent;
+                closestAgent.Distance = distance;
+            }
+        }
+
+        return closestAgent;
+    }
+    
     public static List<Neighbour> Compute(int n, KDTree tree, NavMeshAgent agent)
     {
         nearestNeighbours.Clear();

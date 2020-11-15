@@ -18,11 +18,18 @@ public class SteeringBehaviour
 
     private const float MAX_ACCELERATION = 0.5f;
 
-    private float rayDistance = 1f;
-    private int obstacleWidthMultiplier = 5;
+    private float rayDistance = 5f;
+    public int obstacleWidthMultiplier = 5;
 
-    public void DrawVelocityObstacles(List<VelocityObstacleData> reusedVelocityVectors, NavMeshAgent navMeshAgent,
-        NavMeshAgent nearestNeighbour)
+    private Vector3 Rotate2D(Vector3 source, float angle)
+    {
+        var result = source;
+        result.x = Mathf.Cos(angle) * source.x - Mathf.Sin(angle) * source.y;
+        result.y = Mathf.Sin(angle) * source.x + Mathf.Cos(angle) * source.y;
+        return result;
+    }
+
+    public void DrawVelocityObstacles(List<VelocityObstacleData> reusedVelocityVectors, NavMeshAgent navMeshAgent, NavMeshAgent nearestNeighbour)
     {
         var agentVelocityObstacle = navMeshAgent.transform.GetChild(0);
         // Orientate VO towards neighbour
@@ -36,13 +43,19 @@ public class SteeringBehaviour
         var distance = Vector3.Distance(navMeshAgent.transform.position, nearestNeighbour.transform.position);
         var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
         var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
+        // var alpha = Mathf.Asin(navMeshAgent.radius * obstacleWidthMultiplier / distance);
+        // var directionRight = Rotate2D(agentVelocityObstacle.forward, -alpha);
+        // var directionLeft = Rotate2D(agentVelocityObstacle.forward, alpha);
 
         var rayObstacleRight = new Ray(origin, directionRight);
         var rayObstacleLeft = new Ray(origin, directionLeft);
 
         // Draw ray visualisation
-        Debug.DrawLine(rayObstacleRight.origin, rayDistance * (rayObstacleRight.origin + rayObstacleRight.direction), Color.red);
-        Debug.DrawLine(rayObstacleLeft.origin, rayDistance * (rayObstacleLeft.origin + rayObstacleLeft.direction), Color.blue);
+        Debug.DrawLine(rayObstacleRight.origin, rayObstacleRight.origin + rayObstacleRight.direction * rayDistance, Color.red);
+        Debug.DrawLine(rayObstacleLeft.origin,  rayObstacleLeft.origin + rayObstacleLeft.direction * rayDistance, Color.blue);
+        // Debug.DrawLine(navMeshAgent.transform.position, nearestNeighbour.transform.position, Color.green);
+        Debug.DrawLine(navMeshAgent.transform.position, navMeshAgent.transform.position + rayObstacleRight.direction * distance, Color.green);
+        Debug.DrawLine(navMeshAgent.transform.position, navMeshAgent.transform.position + rayObstacleLeft.direction * distance, Color.green);
 
         reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleLeft});
         reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleRight});
@@ -61,15 +74,25 @@ public class SteeringBehaviour
         foreach (var agentToVelocityVector in agentToVelocityVectors)
         {
             // Compute intersection point between agent's velocity vectors and the rest
-            var (intersectionFound, intersectionPoints) =
-                ComputeIntersectionPoint(agentToVelocityVector.Value, othersVelocityObstacles);
+            var (intersectionFound, intersectionPoints) = ComputeIntersectionPoint(agentToVelocityVector.Value, othersVelocityObstacles);
             if (intersectionFound)
             {
                 // If intersection is found, adjust velocity (within certain acceleration)
                 var agent = agentToVelocityVector.Value[0].agent;
-                agent.velocity = CalculateClosestIntersectionPoint(intersectionPoints, agent);
+                List<Vector3> remappedIntersectionPoints = new List<Vector3>();
+                foreach (var intersectionPoint in intersectionPoints)
+                {
+                    var remappedPoint = agent.transform.TransformVector(intersectionPoint);
+                    remappedIntersectionPoints.Add(remappedPoint);
+                }
+                //agent.velocity = CalculateClosestIntersectionPoint(remappedIntersectionPoints, agent);
+                var intersectionPointLocal = CalculateClosestIntersectionPoint(intersectionPoints, agent);
+                var intersectionPointWorldSpace = CalculateClosestIntersectionPoint(remappedIntersectionPoints, agent);
+                agent.velocity = intersectionPointWorldSpace;
+                Debug.Log($"point {intersectionPointLocal}, remapped point {intersectionPointWorldSpace}");
+                GameObject.CreatePrimitive(PrimitiveType.Sphere).transform.position = intersectionPointWorldSpace;
                 agent.acceleration = Mathf.Min(agent.acceleration, MAX_ACCELERATION);
-                Debug.Log("updating velocity to " + agent.velocity);
+                // Debug.Log("updating velocity to " + agent.velocity);
             }
         }
     }
@@ -103,10 +126,10 @@ public class SteeringBehaviour
                     continue;
                 }
 
-                if (v.origin == u.origin)
-                {
-                    continue;
-                }
+                // if (v.origin == u.origin)
+                // {
+                //     continue;
+                // }
 
                 var up1 = u.origin;
                 var up2 = rayDistance * (u.origin + u.direction);

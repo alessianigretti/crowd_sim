@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,14 +41,14 @@ public class AgentSpawner : MonoBehaviour
         {
             for (int i = 0; i < amount / 2; i++)
             {
-                var agent = Instantiate(agentGoingLeftPrefab, Utils.PickRandomPointInCircle(new Vector3(40, 0, 0), spawnRange), Quaternion.identity);
+                var agent = Instantiate(agentGoingLeftPrefab, Utils.PickRandomPointInCircle(new Vector3(40, 0, -40), spawnRange), Quaternion.identity);
                 agent.name = $"AgentGoingLeft {i}";
                 agents.Add(agent.GetComponent<NavMeshAgent>());
             }
         
             for (int i = 0; i < amount / 2; i++)
             {
-                var agent = Instantiate(agentGoingRightPrefab, Utils.PickRandomPointInCircle(new Vector3(-40, 0, 0), spawnRange), Quaternion.identity);
+                var agent = Instantiate(agentGoingRightPrefab, Utils.PickRandomPointInCircle(new Vector3(-40, 0, -40), spawnRange), Quaternion.identity);
                 agent.name = $"AgentGoingRight {i}";
                 agents.Add(agent.GetComponent<NavMeshAgent>());
             }
@@ -63,17 +65,26 @@ public class AgentSpawner : MonoBehaviour
         {
             reusedAgentToVelocityVectors[agent.name] = new List<SteeringBehaviour.VelocityObstacleData>();
             // Identify nNearest neighbours
-            var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
+            //var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
+            var nearestNeighbour = NearestNeighbour.ComputeSimple(agent);
             
             // Collect 2 velocity vectors (left and right sides of the cone) per nearest neighbour
-            for (int i = 1; i <= nearestNeighbours.Count - 1; i++)
-            {
-                var nearestNeighbour = nearestNeighbours[i];
+            // for (int i = 1; i <= nearestNeighbours.Count - 1; i++)
+            // {
+            //     var nearestNeighbour = nearestNeighbours[i];
                 steeringBehaviour.DrawVelocityObstacles(reusedAgentToVelocityVectors[agent.name], agent, nearestNeighbour.Agent);
-            }
+            // }
         }
 
         // After having computed all velocity vectors, find all intersections and what agents they belong to, and adjust their velocities
         steeringBehaviour.DoSteering(reusedAgentToVelocityVectors);
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (var agent in agents)
+        {
+            Gizmos.DrawWireSphere(agent.transform.position, agent.radius * steeringBehaviour.obstacleWidthMultiplier);
+        }
     }
 }
