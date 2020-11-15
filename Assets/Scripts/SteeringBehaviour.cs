@@ -20,6 +20,7 @@ public class SteeringBehaviour
 
     private float rayDistance = 5f;
     public int obstacleWidthMultiplier = 5;
+    public Vector3 intersectionPoint;
 
     private Vector3 Rotate2D(Vector3 source, float angle)
     {
@@ -41,11 +42,11 @@ public class SteeringBehaviour
 
         // Compute direction of each velocity obstacle depending on distance from nearest neighbour
         var distance = Vector3.Distance(navMeshAgent.transform.position, nearestNeighbour.transform.position);
-        var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
-        var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
-        // var alpha = Mathf.Asin(navMeshAgent.radius * obstacleWidthMultiplier / distance);
-        // var directionRight = Rotate2D(agentVelocityObstacle.forward, -alpha);
-        // var directionLeft = Rotate2D(agentVelocityObstacle.forward, alpha);
+        // var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
+        // var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
+        var alpha = Mathf.Asin(navMeshAgent.radius * obstacleWidthMultiplier / distance);
+        var directionRight = Rotate2D(agentVelocityObstacle.forward, alpha);
+        var directionLeft = Rotate2D(agentVelocityObstacle.forward, -alpha);
 
         var rayObstacleRight = new Ray(origin, directionRight);
         var rayObstacleLeft = new Ray(origin, directionLeft);
@@ -158,18 +159,19 @@ public class SteeringBehaviour
 
                 // 4. Use the parametric ray equation with t to get the intersection point
                 // This means solving A*(ox + dx*t) + B*(oy + dy*t) + C*(oz + dz*t) + D = 0 for vector V replacing t with the newly obtained parameter t.
-                var intersectionPoint = vOrigin + vDirection * t;
+                var intersectionPointLocal = vOrigin + vDirection * t;
 
                 // 5. Validate intersection point
                 // Check that it is inside the line range and it satisfies the plane equation
-                double truncatedCalc = Math.Truncate(planeNormal.x * intersectionPoint.x +
-                                                     planeNormal.y * intersectionPoint.y +
-                                                     planeNormal.z * intersectionPoint.z * 100) / 100;
+                double truncatedCalc = Math.Truncate(planeNormal.x * intersectionPointLocal.x +
+                                                     planeNormal.y * intersectionPointLocal.y +
+                                                     planeNormal.z * intersectionPointLocal.z * 100) / 100;
                 double truncatedD = Math.Truncate(d * 100) / 100;
                 var isValid = Mathf.Approximately((float) (truncatedCalc + truncatedD), 0f);
                 if (isValid)
                 {
-                    intersectionPoints.Add(intersectionPoint);
+                    intersectionPoint = intersectionPointLocal;
+                    intersectionPoints.Add(intersectionPointLocal);
                 }
             }
         }

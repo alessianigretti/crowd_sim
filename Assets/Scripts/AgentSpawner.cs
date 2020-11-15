@@ -41,14 +41,14 @@ public class AgentSpawner : MonoBehaviour
         {
             for (int i = 0; i < amount / 2; i++)
             {
-                var agent = Instantiate(agentGoingLeftPrefab, Utils.PickRandomPointInCircle(new Vector3(40, 0, -40), spawnRange), Quaternion.identity);
+                var agent = Instantiate(agentGoingLeftPrefab, Utils.PickRandomPointInCircle(new Vector3(20, 0, 0), spawnRange), Quaternion.identity);
                 agent.name = $"AgentGoingLeft {i}";
                 agents.Add(agent.GetComponent<NavMeshAgent>());
             }
         
             for (int i = 0; i < amount / 2; i++)
             {
-                var agent = Instantiate(agentGoingRightPrefab, Utils.PickRandomPointInCircle(new Vector3(-40, 0, -40), spawnRange), Quaternion.identity);
+                var agent = Instantiate(agentGoingRightPrefab, Utils.PickRandomPointInCircle(new Vector3(-20, 0, 0), spawnRange), Quaternion.identity);
                 agent.name = $"AgentGoingRight {i}";
                 agents.Add(agent.GetComponent<NavMeshAgent>());
             }
@@ -61,8 +61,9 @@ public class AgentSpawner : MonoBehaviour
         var tree = KDTreeBuilder.BuildKDTree(agents);
 
         var reusedAgentToVelocityVectors = new Dictionary<string, List<SteeringBehaviour.VelocityObstacleData>>();
-        foreach (var agent in agents)
+        for (int i = 0; i < agents.Count; i++)
         {
+            var agent = agents[i];
             reusedAgentToVelocityVectors[agent.name] = new List<SteeringBehaviour.VelocityObstacleData>();
             // Identify nNearest neighbours
             //var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
@@ -86,5 +87,6 @@ public class AgentSpawner : MonoBehaviour
         {
             Gizmos.DrawWireSphere(agent.transform.position, agent.radius * steeringBehaviour.obstacleWidthMultiplier);
         }
+        Gizmos.DrawWireSphere(steeringBehaviour.intersectionPoint, 1f);
     }
 }
