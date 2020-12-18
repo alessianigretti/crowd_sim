@@ -42,21 +42,23 @@ public class SteeringBehaviour
 
         // Compute direction of each velocity obstacle depending on distance from nearest neighbour
         var distance = Vector3.Distance(navMeshAgent.transform.position, nearestNeighbour.transform.position);
-        // var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
-        // var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
-        var alpha = Mathf.Asin(navMeshAgent.radius * obstacleWidthMultiplier / distance);
-        var directionRight = Rotate2D(agentVelocityObstacle.forward, alpha);
-        var directionLeft = Rotate2D(agentVelocityObstacle.forward, -alpha);
+        var directionRight = (agentVelocityObstacle.forward + agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
+        var directionLeft = (agentVelocityObstacle.forward - agentVelocityObstacle.right * navMeshAgent.radius * obstacleWidthMultiplier * 1 / distance).normalized;
+        // var alpha = Mathf.Asin(navMeshAgent.radius * obstacleWidthMultiplier / distance);
+        // var directionRight = Rotate2D(agentVelocityObstacle.forward, alpha);
+        // var directionLeft = Rotate2D(agentVelocityObstacle.forward, -alpha);
 
         var rayObstacleRight = new Ray(origin, directionRight);
         var rayObstacleLeft = new Ray(origin, directionLeft);
 
+        /*
         // Draw ray visualisation
         Debug.DrawLine(rayObstacleRight.origin, rayObstacleRight.origin + rayObstacleRight.direction * rayDistance, Color.red);
         Debug.DrawLine(rayObstacleLeft.origin,  rayObstacleLeft.origin + rayObstacleLeft.direction * rayDistance, Color.blue);
         // Debug.DrawLine(navMeshAgent.transform.position, nearestNeighbour.transform.position, Color.green);
         Debug.DrawLine(navMeshAgent.transform.position, navMeshAgent.transform.position + rayObstacleRight.direction * distance, Color.green);
         Debug.DrawLine(navMeshAgent.transform.position, navMeshAgent.transform.position + rayObstacleLeft.direction * distance, Color.green);
+        */
 
         reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleLeft});
         reusedVelocityVectors.Add(new VelocityObstacleData {agent = navMeshAgent, ray = rayObstacleRight});
@@ -91,7 +93,6 @@ public class SteeringBehaviour
                 var intersectionPointWorldSpace = CalculateClosestIntersectionPoint(remappedIntersectionPoints, agent);
                 agent.velocity = intersectionPointWorldSpace;
                 Debug.Log($"point {intersectionPointLocal}, remapped point {intersectionPointWorldSpace}");
-                GameObject.CreatePrimitive(PrimitiveType.Sphere).transform.position = intersectionPointWorldSpace;
                 agent.acceleration = Mathf.Min(agent.acceleration, MAX_ACCELERATION);
                 // Debug.Log("updating velocity to " + agent.velocity);
             }
@@ -133,10 +134,13 @@ public class SteeringBehaviour
                 // }
 
                 var up1 = u.origin;
-                var up2 = rayDistance * (u.origin + u.direction);
+                var up2 = u.origin + u.direction * rayDistance;
 
                 var vp1 = v.origin;
-                var vp2 = rayDistance * (v.origin + v.direction);
+                var vp2 = v.origin + v.direction * rayDistance;
+                
+                Debug.DrawLine(up1, up2, Color.red);
+                Debug.DrawLine(vp1,  vp2, Color.blue);
 
                 // 1. Find a perpendicular vector to U's direction (normal of the plane containing U).
                 // This can be computed using the cross product or simply by swapping two components (X and Y) and negating one of them.
@@ -170,6 +174,7 @@ public class SteeringBehaviour
                 var isValid = Mathf.Approximately((float) (truncatedCalc + truncatedD), 0f);
                 if (isValid)
                 {
+                    GameObject.CreatePrimitive(PrimitiveType.Sphere).transform.position = intersectionPointLocal;
                     intersectionPoint = intersectionPointLocal;
                     intersectionPoints.Add(intersectionPointLocal);
                 }
