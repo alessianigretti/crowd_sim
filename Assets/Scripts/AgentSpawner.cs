@@ -55,25 +55,25 @@ public class AgentSpawner : MonoBehaviour
         }
     }
 
+    List<SteeringBehaviour.VelocityObstacleData> reusedAgentToVelocityVectors = new List<SteeringBehaviour.VelocityObstacleData>();
     void Update()
     {
         // Build KD-Tree and use it to identify N nearest neighbours (wip)
         var tree = KDTreeBuilder.BuildKDTree(agents);
 
-        var reusedAgentToVelocityVectors = new Dictionary<string, List<SteeringBehaviour.VelocityObstacleData>>();
+        reusedAgentToVelocityVectors.Clear();
         for (int i = 0; i < agents.Count; i++)
         {
             var agent = agents[i];
-            reusedAgentToVelocityVectors[agent.name] = new List<SteeringBehaviour.VelocityObstacleData>();
             // Identify nNearest neighbours
             //var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
             var nearestNeighbour = NearestNeighbour.ComputeSimple(agent);
-            
+
             // Collect 2 velocity vectors (left and right sides of the cone) per nearest neighbour
             // for (int i = 1; i <= nearestNeighbours.Count - 1; i++)
             // {
             //     var nearestNeighbour = nearestNeighbours[i];
-                steeringBehaviour.DrawVelocityObstacles(reusedAgentToVelocityVectors[agent.name], agent, nearestNeighbour.Agent);
+            steeringBehaviour.DrawVelocityObstacles(reusedAgentToVelocityVectors, agent, nearestNeighbour.Agent);
             // }
         }
 
