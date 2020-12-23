@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,10 +18,11 @@ public class AgentSpawner : MonoBehaviour
     public GameObject agentGoingRightPrefab;
     public int amount = 30;
     public float spawnRange = 30f;
-    public int nNearest = 5;
+    // public int nNearest = 5;
 
     private List<NavMeshAgent> agents = new List<NavMeshAgent>();
     private SteeringBehaviour steeringBehaviour = new SteeringBehaviour();
+    private List<SteeringBehaviour.VelocityObstacleData> reusedAgentToVelocityObstacles = new List<SteeringBehaviour.VelocityObstacleData>();
     
     void OnEnable()
     {
@@ -55,38 +54,23 @@ public class AgentSpawner : MonoBehaviour
         }
     }
 
-    List<SteeringBehaviour.VelocityObstacleData> reusedAgentToVelocityVectors = new List<SteeringBehaviour.VelocityObstacleData>();
     void Update()
     {
-        // Build KD-Tree and use it to identify N nearest neighbours (wip)
-        var tree = KDTreeBuilder.BuildKDTree(agents);
+        // TODO: build KD-Tree and use it to identify N nearest neighbours
+        // var tree = KDTreeBuilder.BuildKDTree(agents);
 
-        reusedAgentToVelocityVectors.Clear();
-        for (int i = 0; i < agents.Count; i++)
-        {
-            var agent = agents[i];
-            // Identify nNearest neighbours
-            //var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
-            var nearestNeighbour = NearestNeighbour.ComputeSimple(agent);
-
-            // Collect 2 velocity vectors (left and right sides of the cone) per nearest neighbour
-            // for (int i = 1; i <= nearestNeighbours.Count - 1; i++)
-            // {
-            //     var nearestNeighbour = nearestNeighbours[i];
-            steeringBehaviour.DrawVelocityObstacles(reusedAgentToVelocityVectors, agent, nearestNeighbour.Agent);
-            // }
-        }
-
-        // After having computed all velocity vectors, find all intersections and what agents they belong to, and adjust their velocities
-        steeringBehaviour.DoSteering(reusedAgentToVelocityVectors);
-    }
-
-    private void OnDrawGizmos()
-    {
+        reusedAgentToVelocityObstacles.Clear();
         foreach (var agent in agents)
         {
-            Gizmos.DrawWireSphere(agent.transform.position, agent.radius * steeringBehaviour.obstacleWidthMultiplier);
+            // Identify nNearest neighbours (TODO: use KD-Tree)
+            // var nearestNeighbours = NearestNeighbour.Compute(nNearest, tree, agent);
+            var nearestNeighbour = NearestNeighbour.ComputeUnoptimized(agent);
+
+            // Compute velocity obstacles representing velocities that would lead to a collision
+            steeringBehaviour.ComputeVelocityObstacles(reusedAgentToVelocityObstacles, agent, nearestNeighbour.Agent);
         }
-        Gizmos.DrawWireSphere(steeringBehaviour.intersectionPoint, 1f);
+
+        // After having computed all velocity obstacles for all agents, adjust their velocities
+        steeringBehaviour.DoSteering(reusedAgentToVelocityObstacles);
     }
 }

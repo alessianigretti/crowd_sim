@@ -21,10 +21,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b1a84d45-4fab-433d-8916-10b917406a75" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrowdSim/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingLeft.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingLeft.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingRight.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/AgentGoingRight.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/NavigationScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,9 +70,9 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTree.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/KDTreeBuilder.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/Utils.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/CollisionChecker.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/AgentMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/KDTree/NearestNeighbour.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AgentSpawner.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/SteeringBehaviour.cs" />
       </list>
@@ -112,10 +111,10 @@
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="31388">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="31388" />
+      <option name="pid" />
       <option name="selectedOptions">
         <set />
       </option>
@@ -160,6 +159,7 @@
       <workItem from="1608221023825" duration="3541000" />
       <workItem from="1608304060785" duration="5864000" />
       <workItem from="1608630875812" duration="11494000" />
+      <workItem from="1608716245627" duration="2074000" />
     </task>
     <servers />
   </component>
@@ -293,10 +293,10 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2446" y="257" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608636279002" />
-    <state x="2558" y="253" width="644" height="534" key="find.popup" timestamp="1608311382295">
+    <state x="2558" y="253" width="644" height="534" key="find.popup" timestamp="1608717529393">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2558" y="253" width="644" height="534" key="find.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608311382295" />
+    <state x="2558" y="253" width="644" height="534" key="find.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608717529393" />
     <state x="425" y="187" key="run.anything.popup" timestamp="1605464664637">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

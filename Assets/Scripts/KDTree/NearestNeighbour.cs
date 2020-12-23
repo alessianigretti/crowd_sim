@@ -12,7 +12,7 @@ public static class NearestNeighbour
     
     private static List<Neighbour> nearestNeighbours = new List<Neighbour>();
 
-    public static Neighbour ComputeSimple(NavMeshAgent agent)
+    public static Neighbour ComputeUnoptimized(NavMeshAgent agent)
     {
         var allAgents = GameObject.FindGameObjectsWithTag("Agent");
         var closestAgent = new Neighbour {Distance = Mathf.Infinity};

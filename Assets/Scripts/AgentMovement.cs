@@ -2,7 +2,7 @@
 using UnityEngine.AI;
 
 /// <summary>
-/// Sets random destinations for agents so they keep moving
+/// Sets destinations for agents so they keep moving
 /// </summary>
 public class AgentMovement : MonoBehaviour
 {
