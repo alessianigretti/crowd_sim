@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -21,11 +22,14 @@ public class AgentSpawner : MonoBehaviour
     // public int nNearest = 5;
 
     private List<NavMeshAgent> agents = new List<NavMeshAgent>();
-    private SteeringBehaviour steeringBehaviour = new SteeringBehaviour();
+    private SteeringBehaviour steeringBehaviour;
     private List<SteeringBehaviour.VelocityObstacleData> reusedAgentToVelocityObstacles = new List<SteeringBehaviour.VelocityObstacleData>();
-    
+    private Vector3 gizmoSphere;
+
     void OnEnable()
     {
+        steeringBehaviour = new SteeringBehaviour(this);
+            
         // Generate agents depending on CrowdSimType selected (agents prefabs have different movement behaviours)
         if (crowdSimType == CrowdSimType.RandomCrowd)
         {
@@ -72,5 +76,15 @@ public class AgentSpawner : MonoBehaviour
 
         // After having computed all velocity obstacles for all agents, adjust their velocities
         steeringBehaviour.DoSteering(reusedAgentToVelocityObstacles);
+    }
+
+    public void SetGizmoDrawing(Vector3 gizmoSphere)
+    {
+        this.gizmoSphere = gizmoSphere;
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(gizmoSphere, 1f);
     }
 }

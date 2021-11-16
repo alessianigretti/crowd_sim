@@ -21,6 +21,13 @@ public class SteeringBehaviour
     private List<Vector3> intersectionPoints = new List<Vector3>();
     private NavMeshAgent intersectingAgent;
 
+    private AgentSpawner spawner;
+
+    public SteeringBehaviour(AgentSpawner spawner)
+    {
+        this.spawner = spawner;
+    }
+    
     public void ComputeVelocityObstacles(List<VelocityObstacleData> reusedVelocityObstacles, NavMeshAgent navMeshAgent, NavMeshAgent nearestNeighbour)
     {
         var agentVelocityObstacle = navMeshAgent.transform.GetChild(0);
@@ -108,6 +115,28 @@ public class SteeringBehaviour
                 
                 Debug.DrawLine(up1, up2, Color.red);
                 Debug.DrawLine(vp1,  vp2, Color.blue);
+
+                // Determine whether the intersection happens or not
+                var dx = vp1.x - up1.x;
+                var dy = vp1.y - up1.y;
+                var det = vp2.x * up2.y - vp2.y * up2.x;
+                var rayU = (dy * vp2.x - dx * vp2.y) / det;
+                var rayV = (dy * up2.x - dx * up2.y) / det;
+
+                if (det == 0)
+                {
+                    Debug.Log("No intersection");
+                    continue;
+                }
+                else if (rayU > 0 && rayV > 0)
+                {
+                    Debug.Log("Intersection");
+                }
+                else
+                {
+                    Debug.Log("No intersection");
+                    continue;
+                }
                 
                 // 1. Find a perpendicular vector to U's direction (normal of the plane containing U).
                 // This can be computed using the cross product or simply by swapping two components (X and Y) and negating one of them.
@@ -125,8 +154,7 @@ public class SteeringBehaviour
                 var vOrigin = vp1;
                 var vDirection = vp2;
                 var t = -(planeNormal.x * vOrigin.x + planeNormal.y * vOrigin.y + planeNormal.z * vOrigin.z + d) /
-                        (planeNormal.x * vDirection.x + planeNormal.y * vDirection.y +
-                         planeNormal.z * vDirection.z);
+                        (planeNormal.x * vDirection.x + planeNormal.y * vDirection.y + planeNormal.z * vDirection.z);
                 
                 // 4. Use the parametric ray equation with t to get the intersection point
                 // This means solving A*(ox + dx*t) + B*(oy + dy*t) + C*(oz + dz*t) + D = 0 for vector V replacing t with the newly obtained parameter t.
@@ -137,11 +165,12 @@ public class SteeringBehaviour
                 // Note: hacky calculations to check for approx the same values, probably source of some bugs where collision is not detected 
                 double truncatedCalc = Math.Truncate(planeNormal.x * intersectionPointLocal.x +
                                                      planeNormal.y * intersectionPointLocal.y +
-                                                     planeNormal.z * intersectionPointLocal.z * 100) / 100;
+                                                     planeNormal.z * intersectionPointLocal.z * 100f) / 100;
                 double truncatedD = Math.Truncate(d * 100) / 100;
-                var isValid = Mathf.Approximately((float) (truncatedCalc + truncatedD), 0f);
+                var isValid = (float) (truncatedCalc + truncatedD) == 0f;
                 if (isValid)
                 {
+                    spawner.SetGizmoDrawing(intersectionPointLocal);
                     intersectionPoints.Add(intersectionPointLocal);
                     intersectingAgent = agentsVelocityObstacles[i].agent;
                 }
