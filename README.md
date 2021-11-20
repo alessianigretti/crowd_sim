@@ -1,2 +1,2 @@
 # CrowdSim
-High-performance crowd simulation - growth plan project for Klang Games
+Crowd simulation using ClearPath algorithm - growth plan project for Klang Games
